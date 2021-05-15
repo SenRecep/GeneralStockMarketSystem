@@ -1,0 +1,142 @@
+﻿@page "/account"
+@inject ILocalStorageService localStorageService
+@inject IUserService userService
+@inject IWalletService walletService
+@inject NavigationManager navigationManager
+
+<link href="/css/Client/dist/account.css" rel="stylesheet" />
+<div class="page account-page">
+    <PageHeader Title="Profil" />
+    @if (IsLoading)
+    {
+        <Loading />
+    }
+    else
+    {
+
+        <div class="section-one">
+            <div class="profile-image rainbow">
+                <img class="img-fluid" src="/img/profile.svg" alt="user profile icon" />
+            </div>
+            <div class="section-right-side">
+                <p>@LoginUser.UserName</p>
+                <p>
+                    @if (IsVerified)
+                    {
+                        <i class="fas fa-check-circle text-success"></i>
+                        <span>Doğrulanmış</span>
+                    }
+                    else
+                    {
+                        <i class="fas fa-check-circle text-danger"></i>
+                        <span>Doğrulanmamış</span>
+                    }
+                </p>
+            </div>
+        </div>
+
+        <div class="section-two">
+            <EditForm Model="LoginUser" OnValidSubmit="ValidSubmit">
+                <FluentValidationValidator></FluentValidationValidator>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="FirstName" >Ad</label>
+                        <InputText @bind-Value="LoginUser.FirstName" type="text" class="form-control" placeholder="Ad" id="FirstName" @bind-disabled="DisableAttribute" />
+                        <ValidationMessage For="() => LoginUser.FirstName"></ValidationMessage>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="LastName">Soyad</label>
+                        <InputText @bind-Value="LoginUser.LastName" type="text" class="form-control" placeholder="Soyad" id="LastName" @bind-disabled="DisableAttribute" />
+                        <ValidationMessage For="() => LoginUser.LastName"></ValidationMessage>
+                    </div>
+
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="IdentityNumber">TC Kimlik Numarsı</label>
+                        <InputText @bind-Value="LoginUser.IdentityNumber" type="text" class="form-control" placeholder="TC Kimlik Numarsı" id="IdentityNumber" @bind-disabled="DisableAttribute"/>
+                        <ValidationMessage For="() => LoginUser.IdentityNumber"></ValidationMessage>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="PhoneNumber">Telefon Numarası</label>
+                        <InputText @bind-Value="LoginUser.PhoneNumber" type="text" class="form-control" placeholder="Telefon Numarası" id="PhoneNumber" />
+                        <ValidationMessage For="() => LoginUser.PhoneNumber"></ValidationMessage>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="Email">Email</label>
+                        <InputText @bind-Value="LoginUser.Email" type="email" class="form-control" placeholder="Email" id="Email" />
+                        <ValidationMessage For="() => LoginUser.Email"></ValidationMessage>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="Address">Adres</label>
+                        <InputTextArea @bind-Value="LoginUser.Address" type="text" class="form-control" placeholder="Adres" id="Address" />
+                        <ValidationMessage For="() => LoginUser.Address"></ValidationMessage>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <input class="btn btn-success offset-md-5 col-md-2" type="submit" value="Save" />
+                </div>
+            </EditForm>
+        </div>
+    }
+</div>
+
+
+
+
+@code{
+
+    [CascadingParameter]
+    private Task<AuthenticationState> AuthenticationStateTask { get; set; }
+
+    public UserDto LoginUser { get; set; } = null;
+
+    public bool IsVerified { get; set; }
+
+    public bool IsLoading { get; set; } = true;
+
+    public string DisableAttribute { get; set; }
+
+
+    protected async Task InitAsync()
+    {
+        var authenticationState = await AuthenticationStateTask;
+        IsVerified = authenticationState.User.Claims.Where(x => x.Type == "role" && x.Value == RoleInfo.IsVerified).Any();
+        LoginUser = await localStorageService.GetItemAsync<UserDto>(LocalStorageInfo.LoginUser);
+        IsLoading = false;
+
+        DisableAttribute = IsVerified? "disabled":null;
+        StateHasChanged();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await InitAsync();
+        }
+    }
+
+    protected async Task ValidSubmit()
+    {
+        IsLoading = true;
+        StateHasChanged();
+        var response = await userService.UpdateProfileAsync(LoginUser);
+        if (response.IsSuccessful)
+        {
+            var userResponse = await userService.GetUserAsync();
+
+            if (userResponse.IsSuccessful)
+            {
+                await localStorageService.RemoveItemAsync(LocalStorageInfo.LoginUser);
+                await localStorageService.SetItemAsync(LocalStorageInfo.LoginUser, userResponse.Data);
+            }
+
+            await walletService.CreateWalletAsync();
+
+            navigationManager.NavigateTo("/auth/refreshtoken", true);
+        }
+    }
+}

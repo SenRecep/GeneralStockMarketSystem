@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\DTO\GeneralStockMarket.DTO.Validation\GeneralStockMarket.DTO.Validation.csproj" />
+    <ProjectReference Include="..\..\..\Shared\GeneralStockMarket.ApiShared\GeneralStockMarket.ApiShared.csproj" />
+    <ProjectReference Include="..\GeneralStockMarket.Dal\GeneralStockMarket.Dal.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Helpers\" />
+    <Folder Include="Concrete\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
+    <PackageReference Include="FluentValidation.AspNetCore" Version="10.1.0" />
+  </ItemGroup>
+
+</Project>

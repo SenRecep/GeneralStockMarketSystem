@@ -1,0 +1,14 @@
+﻿@page "/logout"
+@inject NavigationManager navMan
+@inject ILocalStorageService localStorageService
+
+
+
+@code{
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await localStorageService.RemoveItemAsync(GeneralStockMarket.ClientShared.StringInfo.LocalStorageInfo.LoginUser);
+        navMan.NavigateTo("/auth/logout",true);
+    }
+}

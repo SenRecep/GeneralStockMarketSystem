@@ -1,0 +1,12 @@
+﻿<div class="page-header">
+    <a href="@Url"><i class="fas fa-arrow-left"></i></a>
+    <h3>@Title</h3>
+</div>
+
+
+@code{
+    [Parameter]
+    public string Title { get; set; }
+    [Parameter]
+    public string Url{get;set;}="/";
+}

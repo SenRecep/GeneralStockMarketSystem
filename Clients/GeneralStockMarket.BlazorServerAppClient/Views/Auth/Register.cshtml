@@ -1,0 +1,49 @@
+﻿@model RegisterViewModel
+<div class="d-flex justify-content-center form_container">
+    <form method="post">
+        @if (ViewBag.ErrorMessage is not null)
+        {
+        <div class="validation-summary-errors">@Html.Raw(ViewBag.ErrorMessage)</div>
+        }
+        <div asp-validation-summary="All"></div>
+        <div class="input-group mb-2">
+            <div class="input-group-append">
+                <span class="input-group-text"><i class="fas fa-user"></i></span>
+            </div>
+            <input type="text" asp-for="UserName" class="form-control auth-input"  placeholder="Kullanıcı adı">
+        </div>
+        <div class="input-group mb-2">
+            <div class="input-group-append">
+                <span class="input-group-text"><i class="fas fa-at"></i></span>
+            </div>
+            <input type="email" asp-for="Email" class="form-control auth-input"  placeholder="Email">
+        </div>
+        <div class="input-group mb-2">
+            <div class="input-group-append">
+                <span class="input-group-text"><i class="fas fa-key"></i></span>
+            </div>
+            <input type="password" asp-for="Password" class="form-control auth-input"  placeholder="Parola">
+        </div>
+        <div class="input-group mb-2">
+            <div class="input-group-append">
+                <span class="input-group-text"><i class="fas fa-key"></i></span>
+            </div>
+            <input type="password" asp-for="PasswordConfirm" class="form-control auth-input"  placeholder="Parola tekrar">
+        </div>
+        <div class="d-flex justify-content-center mt-3 auth_container">
+            <button type="submit" name="button" class="btn login_btn">Kayıt ol</button>
+        </div>
+    </form>
+
+</div>
+
+<div class="mt-4">
+    <div class="d-flex justify-content-center links">
+        Zaten bir hesabım var <a asp-action="login" class="ml-2">Giriş yap</a>
+    </div>
+</div>
+
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+}

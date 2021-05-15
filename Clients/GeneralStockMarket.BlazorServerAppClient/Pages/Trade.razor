@@ -1,0 +1,36 @@
+﻿@page "/trade/{Id:guid}"
+@attribute [Authorize(Roles = RoleInfo.IsVerified)]
+@inject IProductService productService
+
+<link href="/css/Client/dist/trade.css" rel="stylesheet" />
+
+<div class="page trade-page">
+    <PageHeader Title="Alım/Satım" />
+    @if (ProductTradeDto.IsNull())
+    {
+        <Loading />
+    }
+    else
+    {
+        <h1>@ProductTradeDto.Name</h1>
+        <h1>@ProductTradeDto.Amount</h1>
+        <h1>@ProductTradeDto.AvgPrice</h1>
+        <h1>@ProductTradeDto.MarketItems.Count()</h1>
+    }
+</div>
+
+@code{
+    [Parameter]
+    public Guid Id { get; set; }
+
+    public ProductTradeDto ProductTradeDto { get; set; } = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        var productResponse = await productService.GetProductByIdAsync(Id);
+        if (productResponse.IsSuccessful)
+            ProductTradeDto = productResponse.Data;
+    }
+
+}

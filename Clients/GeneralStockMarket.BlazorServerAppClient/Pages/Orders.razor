@@ -1,0 +1,48 @@
+﻿@page "/orders"
+
+@attribute [Authorize(Roles = RoleInfo.IsVerified)]
+
+<link href="/css/Client/dist/orders.css" rel="stylesheet" />
+<div class="page orders-page">
+    <PageHeader Title="Emirler" />
+    <div class="section-one">
+        <button class="btn btn-md btn-primary">Bekleyen</button>
+        <button class="btn btn-md btn-primary">Gerçekleşen</button>
+    </div>
+    <div class="orders-table">
+
+
+        <div class="table-responsive w-100 ">
+
+            <table class="table table-light table-striped table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Ürün adı</th>
+                        <th>Miktar</th>
+                        <th>Fiyat</th>
+                        <th>Tarih</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < 30; i++)
+                    {
+                        <tr>
+                            <td>Elmaların suyunun ağacı</td>
+                            <td>60</td>
+                            <td>4.5₺</td>
+                            <td>20.03.2021</td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th>Ürün adı</th>
+                        <th>Miktar</th>
+                        <th>Fiyat</th>
+                        <th>Tarih</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>

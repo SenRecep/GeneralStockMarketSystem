@@ -1,0 +1,91 @@
+﻿@page "/requests"
+@inject IRequestService requestService
+@attribute [Authorize(Roles = RoleInfo.IsVerified)]
+
+<link href="/css/Client/dist/request.css" rel="stylesheet" />
+<div class="page request-page">
+    <PageHeader Title="İstekler" />
+
+    @if (IsLoading)
+    {
+<Loading /> }
+else
+{
+<div class="section-one">
+    <a> <i class="fas fa-clipboard-list"></i></a>
+    <a href="/requestadd"> <i class="fas fa-plus-square"></i></a>
+</div>
+                <div class="accordion" id="accordionExample">
+                    <ul>
+                        @foreach (var item in RequestDto.DepositRequestDtos)
+                        {
+            <li>
+                <a data-toggle="collapse" href="#accord-@IdCounter" aria-expanded="false">
+                    <div class="outer-div">
+                        <div class="px-2">
+                            <p class="text-truncate">İstek Tipi: TL Yatırma</p>
+                            <p class="text-truncate">Miktar:@item.Amount</p>
+                        </div>
+                        <button><i class="far fa-trash-alt"></i></button>
+                    </div>
+                    <div id="accord-@(IdCounter++)" data-parent="#accordionExample" class="collapse in detail" aria-expanded="true">
+                        @item.Description
+                    </div>
+                </a>
+            </li>
+    }
+                        @foreach (var item in RequestDto.ProductDepositRequestDtos)
+                        {
+        <li>
+            <a data-toggle="collapse" href="#accord-@IdCounter" aria-expanded="false">
+                <div class="outer-div">
+                    <div class="px-2">
+                        <p class="text-truncate">İstek Tipi: Ürün Ekleme</p>
+                        <p class="text-truncate">Miktar:@item.Amount</p>
+                    </div>
+                    <button><i class="far fa-trash-alt"></i></button>
+                </div>
+                <div id="accord-@(IdCounter++)" data-parent="#accordionExample" class="collapse in detail" aria-expanded="true">
+                    <p>@item.Product?.Name</p>
+                    @item.Description
+                </div>
+            </a>
+        </li>
+}
+                        @foreach (var item in RequestDto.NewTypeRequestDtos)
+                        {
+        <li>
+            <a data-toggle="collapse" href="#accord-@IdCounter" aria-expanded="false">
+                <div class="outer-div">
+                    <div class="px-2">
+                        <p class="text-truncate">İstek Tipi: Yeni Ürün Tipi</p>
+                        <p class="text-truncate">Ürün Adı: @item.Name</p>
+                    </div>
+                    <button><i class="far fa-trash-alt"></i></button>
+                </div>
+                <div id="accord-@(IdCounter++)" data-parent="#accordionExample" class="collapse in detail" aria-expanded="true">
+                    @item.Description
+                </div>
+            </a>
+        </li>
+}
+                    </ul>
+                </div>}
+
+</div>
+
+
+@code{ public bool IsLoading { get; set; } = true;
+    public RequestDto RequestDto { get; set; }
+
+    public int IdCounter { get; set; } = 0;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var requestResponse = await requestService.GetRequestsAsync();
+        if (requestResponse.IsSuccessful)
+            RequestDto = requestResponse.Data;
+        IsLoading = false;
+        StateHasChanged();
+    } }

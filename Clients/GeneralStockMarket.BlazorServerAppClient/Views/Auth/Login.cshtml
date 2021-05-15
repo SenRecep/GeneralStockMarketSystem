@@ -1,0 +1,49 @@
+﻿@model LoginViewModel
+<div class="d-flex justify-content-center form_container">
+    <form method="post">
+        @if (ViewBag.ErrorMessage is not null)
+        {
+            <div class="validation-summary-errors">@Html.Raw(ViewBag.ErrorMessage)</div>
+        }
+        <div asp-validation-summary="All"></div>
+        <div class="input-group mb-3">
+            <div class="input-group-append">
+                <span class="input-group-text"><i class="fas fa-user"></i></span>
+            </div>
+            <input type="text" asp-for="UserName" class="form-control auth-input"  placeholder="Kullanıcı adı">
+        </div>
+
+        <div class="input-group mb-2">
+            <div class="input-group-append">
+                <span class="input-group-text"><i class="fas fa-key"></i></span>
+            </div>
+            <input type="password" asp-for="Password" class="form-control auth-input" placeholder="Parola">
+        </div>
+
+
+        <div class="form-group">
+            <div class="custom-control custom-checkbox">
+                <input type="checkbox" asp-for="RememberMe" class="custom-control-input">
+                <label class="custom-control-label" asp-for="RememberMe">Beni hatırla</label>
+            </div>
+        </div>
+        <div class="d-flex justify-content-center mt-3 auth_container">
+            <button type="submit" class="btn login_btn">Giriş yap</button>
+        </div>
+    </form>
+
+</div>
+
+<div class="mt-4">
+    <div class="d-flex justify-content-center links">
+        Hesabın yok mu? <a asp-action="register" class="ml-2">Kayıt ol</a>
+    </div>
+    <div class="d-flex justify-content-center links">
+        <a href="#">Parolani mı hatırlamıyorsun?</a>
+    </div>
+</div>
+
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+}

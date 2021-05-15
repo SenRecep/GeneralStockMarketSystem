@@ -1,0 +1,38 @@
+.account-page {
+    background-color: var(--color7);
+  
+    .section-one {
+        display: flex;
+        margin: 2rem;
+        padding:  1rem;
+        background-color: var(--color6);
+
+        .profile-image {
+            img {
+                height: 100px;
+            }
+        }
+
+        .section-right-side {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            margin-left: 2rem;
+            p {
+                margin: 0;
+                font-size: 1rem;
+            }
+        }
+    }
+
+    .section-two{
+        margin: 2rem;
+        padding:  1rem;
+        background-color: var(--color6);
+    }
+
+    .loading {
+        margin-top: 25vh;
+        
+    }
+}

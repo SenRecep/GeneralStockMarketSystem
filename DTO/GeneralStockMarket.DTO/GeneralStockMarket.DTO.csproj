@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\CoreLib\GeneralStockMarket.CoreLib\GeneralStockMarket.CoreLib.csproj" />
+  </ItemGroup>
+
+</Project>

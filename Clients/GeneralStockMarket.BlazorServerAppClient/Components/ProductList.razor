@@ -1,0 +1,37 @@
+﻿@inject IProductService productService
+@inject PhotoHelper photoHelper
+
+@if (Products == null)
+{
+    <Loading/>
+}
+else
+{
+    <ul>
+        @foreach (var product in Products)
+        {
+            <li>
+                <a href="/trade/@product.Id">
+                    <div>
+                        <img src="@(photoHelper.GetProductImageUrl(product.ImageName))" alt="product-image" />
+                        <p><small>x</small>@product.Amount</p>
+                    </div>
+                    <p class="px-2 text-truncate">@product.Name</p>
+                    <p>@product.AvgPrice₺</p>
+                </a>
+            </li>
+        }
+    </ul>
+}
+
+@code{
+    IEnumerable<ProductDto> Products = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        var productsResponse = await productService.GetProductsAsync();
+        if (productsResponse.IsSuccessful)
+            Products = productsResponse.Data;
+    }
+}

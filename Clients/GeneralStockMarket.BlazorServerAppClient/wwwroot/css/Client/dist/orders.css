@@ -1,0 +1,21 @@
+.orders-page {
+  background-color: var(--color7);
+}
+.orders-page .section-one {
+  display: flex;
+  justify-content: space-around;
+  background-color: var(--color6);
+  padding: 1rem;
+  margin: 2rem;
+}
+.orders-page .orders-table {
+  max-height: 70vh;
+  margin: 2rem;
+  overflow: auto;
+}
+.orders-page .orders-table .table-responsive {
+  max-height: 100%;
+}
+.orders-page .orders-table .table-responsive .table-striped > tbody > tr:nth-child(2n+1) > td, .orders-page .orders-table .table-responsive .table-striped > tbody > tr:nth-child(2n+1) > th {
+  background-color: var(--color3);
+}

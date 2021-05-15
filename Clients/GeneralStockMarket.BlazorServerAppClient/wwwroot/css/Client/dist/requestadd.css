@@ -1,0 +1,17 @@
+.requestadd-page {
+  background-color: var(--color7);
+}
+.requestadd-page .section-one {
+  display: flex;
+  justify-content: center;
+  background-color: var(--color6);
+  padding: 1rem;
+  margin: 2rem 16%;
+  align-items: center;
+  min-height: 35vw;
+}
+.requestadd-page .section-one .form-group {
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+}

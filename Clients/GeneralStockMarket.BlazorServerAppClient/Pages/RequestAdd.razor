@@ -1,0 +1,91 @@
+@page "/requestadd"
+@attribute [Authorize(Roles = RoleInfo.IsVerified)]
+@inject IProductService productService
+@inject IRequestService requestService
+@using GeneralStockMarket.DTO.Validation.ValidationRules.FluentValidation.Request
+
+
+<link href="/css/Client/dist/requestadd.css" rel="stylesheet" />
+
+<div class="page requestadd-page">
+    <PageHeader Title="Yeni İstek" Url="/requests" />
+    @if (Loading)
+    {
+<Loading /> }
+else
+{
+<div class="section-one">
+    <EditForm Model="GenaralCreateDto">
+        <FluentValidationValidator></FluentValidationValidator>
+
+        <div class="form-row">
+            <label>İstek Tipi</label>
+            <select @bind="GenaralCreateDto.RequestType" class="custom-select mb-2">
+                <option value="@RequestType.NonSelect" selected>İşlem tipi seçiniz.</option>
+                <option value="@RequestType.Deposit">TL eklemek istiyorum.</option>
+                <option value="@RequestType.Product">Ürün eklemek istiyorum.</option>
+                <option value="@RequestType.NewType">Yeni tip eklemek istiyorum.</option>
+            </select>
+        </div>
+
+        @if (GenaralCreateDto.RequestType == RequestType.Product)
+        {
+
+<div class="form-row">
+    <label for="ProductId">Ürün</label>
+    <select @bind="GenaralCreateDto.ProductId" id="ProductId" class="custom-select mb-2">
+        <option value="@(new Guid())" selected>Bir ürün seçiniz</option>
+        @foreach (var item in Products)
+        {
+<option value="@item.Id">@item.Name</option>
+}
+    </select>
+    <ValidationMessage For="() => GenaralCreateDto.ProductId"></ValidationMessage>
+</div>}
+
+        @if (GenaralCreateDto.RequestType == RequestType.Deposit || GenaralCreateDto.RequestType == RequestType.Product)
+        {
+<div class="form-row">
+    <label for="Amount">Miktar</label>
+    <InputNumber @bind-Value="GenaralCreateDto.Amount" id="Amount" placeholder="Miktar" class="form-control mb-2" type="number" />
+    <ValidationMessage For="() => GenaralCreateDto.Amount"></ValidationMessage>
+</div>}
+
+
+        @if (GenaralCreateDto.RequestType == RequestType.NewType)
+        {
+<div class="form-row">
+    <label for="Name">Ad</label>
+    <InputText @bind-Value="GenaralCreateDto.Name" id="Name" placeholder="Ad" class="form-control mb-2" type="text" />
+    <ValidationMessage For="() => GenaralCreateDto.Name"></ValidationMessage>
+</div>}
+
+        @if (GenaralCreateDto.RequestType != RequestType.NonSelect)
+        {
+<div class="form-row">
+    <label for="Description">Açıklama</label>
+    <InputTextArea @bind-Value="GenaralCreateDto.Description" id="Description" placeholder="Açıklama" class="form-control mb-2" type="text" rows="3" />
+    <ValidationMessage For="() => GenaralCreateDto.Description"></ValidationMessage>
+</div>}
+        <div class="form-row">
+            <input type="submit" class="btn btn-success offset-md-5 col-md-2" value="Ekle" />
+        </div>
+    </EditForm>
+</div>}
+
+</div>
+
+@code{ public GenaralCreateDto GenaralCreateDto { get; set; } = new GenaralCreateDto();
+
+    public IEnumerable<ProductDto> Products { get; set; }
+
+    public bool Loading { get; set; } = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var productResponse = await productService.GetProductsAsync();
+        if (productResponse.IsSuccessful)
+            Products = productResponse.Data;
+        Loading = false;
+        StateHasChanged();
+    } }

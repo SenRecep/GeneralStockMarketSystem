@@ -1,0 +1,62 @@
+﻿@inject IWalletService walletService
+@inject ILocalStorageService localStorageService
+@if (IsLoading)
+{
+    <Loading />
+}
+else
+{
+    if (IsVerified)
+    {
+        <h5>Net Balance:@Balance₺</h5>
+
+    }
+    else
+    {
+        <h5>Hasabınızı doğrulayınız</h5>
+
+    }
+}
+
+
+@code{
+    public bool IsVerified { get; set; }
+    public bool IsLoading { get; set; } = true;
+    public string Balance { get; set; } = "0";
+
+    [CascadingParameter]
+    private Task<AuthenticationState> AuthenticationStateTask { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Console.WriteLine("Net Balance Component");
+            if (IsVerified)
+            {
+                var wallet = await localStorageService.GetItemAsync<WalletDto>(LocalStorageInfo.Wallet);
+                if (wallet is null)
+                {
+                    var walletResponse = await walletService.GetWalletAsync();
+                    if (walletResponse.IsSuccessful)
+                    {
+                        await localStorageService.SetItemAsync(LocalStorageInfo.Wallet, walletResponse.Data);
+                        wallet = walletResponse.Data;
+                    }
+                    Balance = wallet is not null?wallet.Money.ToString():"Hata";
+                }
+            }
+            IsLoading = false;
+            StateHasChanged();
+        }
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Console.WriteLine("Net Balance Component Init");
+        var authenticationState = await AuthenticationStateTask;
+        IsVerified = authenticationState.User.Claims.Where(x => x.Type == "role" && x.Value == RoleInfo.IsVerified).Any();
+    }
+
+}

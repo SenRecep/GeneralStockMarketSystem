@@ -1,0 +1,3 @@
+IdentityServer: 5201
+WebApi: 5202
+Blazor:5203
