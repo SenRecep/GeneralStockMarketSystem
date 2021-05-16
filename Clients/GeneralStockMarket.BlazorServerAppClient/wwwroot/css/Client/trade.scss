@@ -1,3 +1,106 @@
 .trade-page {
     background-color: var(--color7);
+
+    .section-one{
+        background-color: var(--color6);
+        padding: 1rem;
+        margin: 2rem;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+
+        .form-row{
+            justify-content: center;
+            padding-top: 1.5rem;
+        }
+
+        .form-group{
+            justify-content: center;
+        }
+
+        .row{
+            font-size: 1rem;
+        }
+
+        img{
+            width: 45px;
+        }
+
+        p{
+            margin: 0;
+        }
+
+        ul {
+            max-height: 15vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+            margin: 2rem;
+    
+            li {
+                margin-bottom: 10px;
+    
+                &:last-child {
+                    margin-bottom: 0;
+                }
+    
+                &:hover {
+                    a {
+                        background-color: var(--color1);
+                        color: var(--color4);
+                    }
+                }
+    
+                a {
+                    background-color: var(--color5);
+                    align-items: center;
+                    display: block;
+                    padding: 10px;
+                    text-decoration: none;
+                    color: var(--color6);
+    
+                    .detail {
+                        border-top: 1px solid black;
+                        padding: 0.5rem;
+                    }
+    
+                    .outer-div {
+                        display: flex;
+                        justify-content: space-between;
+                        flex-direction: row;
+    
+                        p {
+                            font-size: 1.5rem;
+                            margin-bottom: 0;
+                            word-wrap: normal;
+                        }
+    
+    
+    
+                        div {
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: baseline;
+                            flex-direction: column;
+    
+                            img {
+                                height: 50px;
+                            }
+                        }
+    
+                        button {
+                            all: unset;
+                            cursor: pointer;
+                            font-size: 2rem;
+                        }
+                    }
+    
+    
+                }
+    
+    
+    
+            }
+    
+        }
+    }
 }
