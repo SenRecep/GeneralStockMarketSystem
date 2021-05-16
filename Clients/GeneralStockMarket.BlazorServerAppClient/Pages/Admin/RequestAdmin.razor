@@ -1,0 +1,30 @@
+@page "/admin/requestadmin"
+@attribute [Authorize(Roles = RoleInfo.DeveloperOrAdmin)]
+
+<link href="/css/Client/dist/requestadmin.css" rel="stylesheet" />
+
+<div class="page requestadmin-page">
+    <PageHeader Title="İstek Onay" />
+    <ul>
+        <div class="accordion" id="accordionExample">
+            <li>
+                <a data-toggle="collapse" href="#c1">
+                    <div class="outer-div row p-2 ">
+                        <div class="px-2 ">
+                            <p class="text-truncate">İstek Tipi: Ürün ekleme</p>
+                            <p class="text-truncate">Miktar: 550</p>
+                        </div>
+                        <div class="d-flex flex-row justify-content-end ">
+                            <button onclick="window.location.href='/admin/requestedit'"><i class="far fa-thumbs-up mr-2"></i></button>
+                            <button onclick="alert('Siliyom bak ona göre')"><i class="far fa-thumbs-down"></i></button>
+                        </div>
+                    </div>
+                    <div id="c1" data-parent="#accordionExample" class="collapse in detail" aria-expanded="true">
+                        <pre class="mb-0">İşlem tarihi:12.03.21<br/>İlgili ürün:Simit<br/>Burada açıklamamız var.</pre>
+                    </div>
+                </a>
+            </li>
+        </div>
+
+    </ul>
+</div>

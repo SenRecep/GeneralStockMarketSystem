@@ -1,36 +1,28 @@
-.request-page {
+.requestadmin-page {
   background-color: var(--color7);
 }
-.request-page .section-one {
-  display: flex;
-  justify-content: space-between;
+.requestadmin-page .section-one {
   background-color: var(--color6);
   padding: 1rem;
   margin: 2rem;
 }
-.request-page .section-one a {
-  color: var(--color2);
-  font-size: 3rem;
-}
-.request-page .section-one a:hover {
-  color: var(--color4);
-}
-.request-page ul {
+.requestadmin-page ul {
   height: 63vh;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   margin: 2rem;
 }
-.request-page ul li {
+.requestadmin-page ul li {
   margin-bottom: 10px;
 }
-.request-page ul li:last-child {
+.requestadmin-page ul li:last-child {
   margin-bottom: 0;
 }
-.request-page ul li:hover a {
+.requestadmin-page ul li:hover a {
   background-color: var(--color1);
   color: var(--color4);
 }
-.request-page ul li a {
+.requestadmin-page ul li a {
   background-color: var(--color5);
   align-items: center;
   display: block;
@@ -38,30 +30,30 @@
   text-decoration: none;
   color: var(--color6);
 }
-.request-page ul li a .detail {
+.requestadmin-page ul li a .detail {
   border-top: 1px solid black;
   padding: 0.5rem;
 }
-.request-page ul li a .outer-div {
+.requestadmin-page ul li a .outer-div {
   display: flex;
   justify-content: space-between;
   flex-direction: row;
 }
-.request-page ul li a .outer-div p {
+.requestadmin-page ul li a .outer-div p {
   font-size: 1.2rem;
   margin-bottom: 0;
   word-wrap: normal;
 }
-.request-page ul li a .outer-div div {
+.requestadmin-page ul li a .outer-div div {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
   flex-direction: column;
 }
-.request-page ul li a .outer-div div img {
+.requestadmin-page ul li a .outer-div div img {
   height: 50px;
 }
-.request-page ul li a .outer-div button {
+.requestadmin-page ul li a .outer-div button {
   all: unset;
   cursor: pointer;
   font-size: 2rem;

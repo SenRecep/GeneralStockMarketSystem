@@ -1,0 +1,22 @@
+@page "/admin/requestedit"
+@attribute [Authorize(Roles = RoleInfo.DeveloperOrAdmin)]
+
+<link href="/css/Client/dist/requestedit.css" rel="stylesheet" />
+
+<div class="page requestedit-page">
+    <PageHeader Title="Ürün Oluşturma" Url="admin/requestadmin" />
+    <div class="section-one">
+        <pre class="mb-0">Eklenmek istenen ürün:Patlıcan<br/>Burada açıklamamız var.</pre>
+        <form>
+            <div class="form-group">
+                <input type="text" class="mb-2 form-control" placeholder="Ürün tipi ismi" />
+                <div class="custom-file mb-2">
+                    <input type="file" class="custom-file-input" id="validatedCustomFile" required>
+                    <label class="custom-file-label" for="validatedCustomFile">Ürün görseli seçiniz...</label>
+                    <div class="invalid-feedback">Geçersiz dosya</div>
+                </div>
+                <input class="form-control" type="submit"/>
+            </div>
+        </form>
+    </div>
+</div>

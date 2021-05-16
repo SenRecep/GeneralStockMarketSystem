@@ -1,29 +1,17 @@
-.request-page {
+.requestadmin-page{
     background-color: var(--color7);
-
-    .section-one {
-        display: flex;
-        justify-content: space-between;
+    .section-one{
         background-color: var(--color6);
         padding: 1rem;
         margin: 2rem;
- 
 
-
-        a {
-            color: var(--color2);
-            font-size: 3rem;
-        }
-
-        a:hover {
-            color: var(--color4);
-        }
+       
 
     }
-
     ul {
         height: 63vh;
-        overflow: auto;
+        overflow-y: auto;
+        overflow-x: hidden;
         margin: 2rem;
 
         li {
