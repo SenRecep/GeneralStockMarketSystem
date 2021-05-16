@@ -5,7 +5,8 @@
                 <NotAuthorized>
                     @if (context.User.Identity.IsAuthenticated)
                     {
-                        <AccessDenied />
+                        <PageDirector Url="/Auth/AccessDenied"/>
+                        @*<AccessDenied />*@
                     }
                     else
                     {
@@ -16,7 +17,8 @@
         </Found>
         <NotFound>
             <LayoutView Layout="@typeof(MainLayout)">
-                <NotFoundPage/>
+                <PageDirector Url="/404" />
+                @*<NotFoundPage />*@
             </LayoutView>
         </NotFound>
     </Router>
