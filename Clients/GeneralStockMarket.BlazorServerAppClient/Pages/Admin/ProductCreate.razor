@@ -1,13 +1,24 @@
-@page "/admin/productcreate/{Id:guid}"
+@page "/admin/productcreate/{RequestId:guid}"
 @page "/admin/productcreate"
+@page "/admin/productupdate/{ProductId:guid}"
 @attribute [Authorize(Roles = RoleInfo.DeveloperOrAdmin)]
+
+
 
 <link href="/css/Client/dist/requestedit.css" rel="stylesheet" />
 
 <div class="page requestedit-page">
     <PageHeader Title="Ürün Oluşturma" Url="admin/request" />
+
+    @if (PageType == PageType.Request)
+    {
+        <div class="section-zero">
+            <pre class="mb-0">Eklenmek istenen ürün:Patlıcan<br />Burada açıklamamız var.</pre>
+        </div>
+    }
+
+
     <div class="section-one">
-        <pre class="mb-0">Eklenmek istenen ürün:Patlıcan<br />Burada açıklamamız var.</pre>
         <form>
             <div class="form-group">
                 <input type="text" class="mb-2 form-control" placeholder="Ürün tipi ismi" />
@@ -25,6 +36,17 @@
 @code{
 
     [Parameter]
-    public Guid Id { get; set; }
+    public Guid RequestId { get; set; }
+
+    [Parameter]
+    public Guid ProductId { get; set; }
+
+    public PageType PageType { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Guid emptyGuid = new Guid();
+        PageType = RequestId == emptyGuid ? (ProductId==emptyGuid? PageType.Create:PageType.Update) : PageType.Request; 
+    }
 
 }

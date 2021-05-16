@@ -1,12 +1,33 @@
-.requestedit-page{
+.requestedit-page {
     background-color: var(--color7);
-    .section-one{
+
+    .section-zero {
+        background-color: var(--color6);
+        pre{
+            color: var(--color4);
+        }
+        padding: 1rem;
+        margin: 1rem;
+    }
+
+    .section-one {
+        display: flex;
+        justify-content: center;
         background-color: var(--color6);
         padding: 1rem;
-        margin: 15% auto;
-        width: 50%;
-        pre{
-            color:var(--color4);
+        margin: 1rem;
+        align-items: center;
+
+        form {
+            width: 100%;
+
+            .form-group {
+                margin: 0;
+            }
+
+            .validation-message {
+                color: tomato;
+            }
         }
     }
 

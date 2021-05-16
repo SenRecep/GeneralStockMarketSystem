@@ -1,12 +1,28 @@
 .requestedit-page {
   background-color: var(--color7);
 }
-.requestedit-page .section-one {
+.requestedit-page .section-zero {
   background-color: var(--color6);
   padding: 1rem;
-  margin: 15% auto;
-  width: 50%;
+  margin: 1rem;
 }
-.requestedit-page .section-one pre {
+.requestedit-page .section-zero pre {
   color: var(--color4);
+}
+.requestedit-page .section-one {
+  display: flex;
+  justify-content: center;
+  background-color: var(--color6);
+  padding: 1rem;
+  margin: 1rem;
+  align-items: center;
+}
+.requestedit-page .section-one form {
+  width: 100%;
+}
+.requestedit-page .section-one form .form-group {
+  margin: 0;
+}
+.requestedit-page .section-one form .validation-message {
+  color: tomato;
 }
