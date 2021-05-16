@@ -2,7 +2,6 @@
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 
-using GeneralStockMarket.ClientShared.ExtensionMethods;
 using GeneralStockMarket.ClientShared.Services.Interfaces;
 using GeneralStockMarket.CoreLib.Response;
 using GeneralStockMarket.DTO.User;
@@ -19,9 +18,7 @@ namespace GeneralStockMarket.ClientShared.Services
 
         public async Task<Response<NoContent>> UpdateProfileAsync(UserDto dto)
         {
-            var res = await httpClient.PutAsJsonAsync("api/user/updateprofile", dto);
-            if (!res.IsSuccessStatusCode)
-                return await res.GetResponseAsync<NoContent>(false, "UserService/UpdateProfileAsync", "Kullanıcı güncellenirken edilirken beklenmedik bir hata ile karşılaşıldı");
+            HttpResponseMessage res = await httpClient.PutAsJsonAsync("api/user/updateprofile", dto);
             return await res.Content.ReadFromJsonAsync<Response<NoContent>>();
         }
     }

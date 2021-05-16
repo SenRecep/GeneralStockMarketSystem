@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
 
 using AutoMapper;
@@ -18,7 +14,6 @@ using IdentityModel.AspNetCore.AccessTokenManagement;
 using IdentityModel.Client;
 
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
@@ -54,7 +49,7 @@ namespace GeneralStockMarket.ClientShared.Services
         {
             Response<string> response = null;
 
-            var currentToken = await clientAccessTokenCache.GetAsync("WebClientToken");
+            ClientAccessToken currentToken = await clientAccessTokenCache.GetAsync("WebClientToken");
 
             if (currentToken is not null)
             {
@@ -86,7 +81,7 @@ namespace GeneralStockMarket.ClientShared.Services
         }
         public async Task<Response<Token>> RefreshTokenAsync()
         {
-            var refreshToken = await httpContextAccessor.HttpContext.GetTokenAsync(OpenIdConnectParameterNames.RefreshToken);
+            string refreshToken = await httpContextAccessor.HttpContext.GetTokenAsync(OpenIdConnectParameterNames.RefreshToken);
             TokenResponse res = await client.RequestRefreshTokenAsync(new RefreshTokenRequest()
             {
                 Address = "connect/token",

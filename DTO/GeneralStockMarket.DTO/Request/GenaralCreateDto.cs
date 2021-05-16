@@ -11,5 +11,7 @@ namespace GeneralStockMarket.DTO.Request
         public Guid ProductId { get; set; }
         public string Name { get; set; }
         public RequestType  RequestType { get; set; }
+        public Guid UserId { get; set; }
+
     }
 }

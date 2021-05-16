@@ -15,59 +15,110 @@ else
     <a> <i class="fas fa-clipboard-list"></i></a>
     <a href="/requestadd"> <i class="fas fa-plus-square"></i></a>
 </div>
-                <div class="accordion" id="accordionExample">
+                <div class="accordion" id="accordion">
                     <ul>
-                        @foreach (var item in RequestDto.DepositRequestDtos)
+                        @foreach (var item in RequestDto.DepositRequestDtos.Where(x => !x.Verify).ToList())
                         {
-            <li>
-                <a data-toggle="collapse" href="#accord-@IdCounter" aria-expanded="false">
-                    <div class="outer-div">
-                        <div class="px-2">
-                            <p class="text-truncate">İstek Tipi: TL Yatırma</p>
-                            <p class="text-truncate">Miktar:@item.Amount</p>
-                        </div>
-                        <button><i class="far fa-trash-alt"></i></button>
-                    </div>
-                    <div id="accord-@(IdCounter++)" data-parent="#accordionExample" class="collapse in detail" aria-expanded="true">
-                        @item.Description
-                    </div>
-                </a>
-            </li>
-    }
-                        @foreach (var item in RequestDto.ProductDepositRequestDtos)
+                    <li>
+                        <a data-toggle="collapse" class="@(item.Verify?"completed":"")" href="#accord-@IdCounter" aria-expanded="false">
+                            <div class="outer-div">
+                                <div class="px-2">
+                                    <p class="text-truncate">İstek Tipi: TL Yatırma</p>
+                                    <p class="text-truncate">Miktar:@item.Amount</p>
+                                </div>
+                                <button><i class="far fa-trash-alt"></i></button>
+                            </div>
+                            <div id="accord-@(IdCounter++)" data-parent="#accordion" class="collapse in detail" aria-expanded="true">
+                                @item.Description
+                            </div>
+                        </a>
+                    </li>}
+                        @foreach (var item in RequestDto.ProductDepositRequestDtos.Where(x => !x.Verify).ToList())
                         {
-        <li>
-            <a data-toggle="collapse" href="#accord-@IdCounter" aria-expanded="false">
-                <div class="outer-div">
-                    <div class="px-2">
-                        <p class="text-truncate">İstek Tipi: Ürün Ekleme</p>
-                        <p class="text-truncate">Miktar:@item.Amount</p>
-                    </div>
-                    <button><i class="far fa-trash-alt"></i></button>
-                </div>
-                <div id="accord-@(IdCounter++)" data-parent="#accordionExample" class="collapse in detail" aria-expanded="true">
-                    <p>@item.Product?.Name</p>
-                    @item.Description
-                </div>
-            </a>
-        </li>
+                    <li>
+                        <a data-toggle="collapse" class="@(item.Verify?"completed":"")" href="#accord-@IdCounter" aria-expanded="false">
+                            <div class="outer-div">
+                                <div class="px-2">
+                                    <p class="text-truncate">İstek Tipi: Ürün Ekleme</p>
+                                    <p class="text-truncate">Miktar:@item.Amount</p>
+                                </div>
+                                <button><i class="far fa-trash-alt"></i></button>
+                            </div>
+                            <div id="accord-@(IdCounter++)" data-parent="#accordion" class="collapse in detail" aria-expanded="true">
+                                <h1>@item.Product.Name</h1> 
+                                @item.Description
+                            </div>
+                        </a>
+                    </li>
 }
-                        @foreach (var item in RequestDto.NewTypeRequestDtos)
+                        @foreach (var item in RequestDto.NewTypeRequestDtos.Where(x => !x.Verify).ToList())
                         {
-        <li>
-            <a data-toggle="collapse" href="#accord-@IdCounter" aria-expanded="false">
-                <div class="outer-div">
-                    <div class="px-2">
-                        <p class="text-truncate">İstek Tipi: Yeni Ürün Tipi</p>
-                        <p class="text-truncate">Ürün Adı: @item.Name</p>
-                    </div>
-                    <button><i class="far fa-trash-alt"></i></button>
-                </div>
-                <div id="accord-@(IdCounter++)" data-parent="#accordionExample" class="collapse in detail" aria-expanded="true">
-                    @item.Description
-                </div>
-            </a>
-        </li>
+                    <li>
+                        <a data-toggle="collapse" class="@(item.Verify?"completed":"")" href="#accord-@IdCounter" aria-expanded="false">
+                            <div class="outer-div">
+                                <div class="px-2">
+                                    <p class="text-truncate">İstek Tipi: Yeni Ürün Tipi</p>
+                                    <p class="text-truncate">Ürün Adı: @item.Name</p>
+                                </div>
+                                <button><i class="far fa-trash-alt"></i></button>
+                            </div>
+                            <div id="accord-@(IdCounter++)" data-parent="#accordion" class="collapse in detail" aria-expanded="true">
+                                @item.Description
+                            </div>
+                        </a>
+                    </li>
+}
+
+                        @foreach (var item in RequestDto.DepositRequestDtos.Where(x => x.Verify).ToList())
+                        {
+                    <li>
+                        <a data-toggle="collapse" class="@(item.Verify?"completed":"")" href="#accord-@IdCounter" aria-expanded="false">
+                            <div class="outer-div">
+                                <div class="px-2">
+                                    <p class="text-truncate">İstek Tipi: TL Yatırma</p>
+                                    <p class="text-truncate">Miktar:@item.Amount</p>
+                                </div>
+                                <button><i class="far fa-trash-alt"></i></button>
+                            </div>
+                            <div id="accord-@(IdCounter++)" data-parent="#accordion" class="collapse in detail" aria-expanded="true">
+                                @item.Description
+                            </div>
+                        </a>
+                    </li>}
+                        @foreach (var item in RequestDto.ProductDepositRequestDtos.Where(x => x.Verify).ToList())
+                        {
+                    <li>
+                        <a data-toggle="collapse" class="@(item.Verify?"completed":"")" href="#accord-@IdCounter" aria-expanded="false">
+                            <div class="outer-div">
+                                <div class="px-2">
+                                    <p class="text-truncate">İstek Tipi: Ürün Ekleme</p>
+                                    <p class="text-truncate">Miktar:@item.Amount</p>
+                                </div>
+                                <button><i class="far fa-trash-alt"></i></button>
+                            </div>
+                            <div id="accord-@(IdCounter++)" data-parent="#accordion" class="collapse in detail" aria-expanded="true">
+                                @item.Product.Name
+                                @item.Description
+                            </div>
+                        </a>
+                    </li>
+}
+                        @foreach (var item in RequestDto.NewTypeRequestDtos.Where(x => x.Verify).ToList())
+                        {
+                    <li>
+                        <a data-toggle="collapse" class="@(item.Verify?"completed":"")" href="#accord-@IdCounter" aria-expanded="false">
+                            <div class="outer-div">
+                                <div class="px-2">
+                                    <p class="text-truncate">İstek Tipi: Yeni Ürün Tipi</p>
+                                    <p class="text-truncate">Ürün Adı: @item.Name</p>
+                                </div>
+                                <button><i class="far fa-trash-alt"></i></button>
+                            </div>
+                            <div id="accord-@(IdCounter++)" data-parent="#accordion" class="collapse in detail" aria-expanded="true">
+                                @item.Description
+                            </div>
+                        </a>
+                    </li>
 }
                     </ul>
                 </div>}

@@ -39,6 +39,9 @@
   text-decoration: none;
   color: var(--color6);
 }
+.request-page ul li a.completed {
+  background-color: #ADFF2F;
+}
 .request-page ul li a .detail {
   border-top: 1px solid black;
   padding: 0.5rem;

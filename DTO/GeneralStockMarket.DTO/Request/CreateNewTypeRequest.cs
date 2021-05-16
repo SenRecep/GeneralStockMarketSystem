@@ -1,4 +1,6 @@
 ﻿
+using System;
+
 using GeneralStockMarket.CoreLib.Interfaces;
 
 namespace GeneralStockMarket.DTO.Request
@@ -7,5 +9,8 @@ namespace GeneralStockMarket.DTO.Request
     {
         public string Name { get; set; }
         public string Description { get; set; }
+        public Guid UserId { get; set; }
+
+
     }
 }
