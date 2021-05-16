@@ -6,12 +6,12 @@
   justify-content: center;
   background-color: var(--color6);
   padding: 1rem;
-  margin: 2rem 16%;
+  margin: 2rem;
   align-items: center;
-  min-height: 35vw;
 }
-.requestadd-page .section-one .form-group {
-  display: flex;
-  flex-direction: column;
-  padding: 2rem;
+.requestadd-page .section-one form {
+  width: 85%;
+}
+.requestadd-page .section-one form .validation-message {
+  color: tomato;
 }

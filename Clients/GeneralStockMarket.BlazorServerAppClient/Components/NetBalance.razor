@@ -31,7 +31,6 @@ else
     {
         if (firstRender)
         {
-            Console.WriteLine("Net Balance Component");
             if (IsVerified)
             {
                 var wallet = await localStorageService.GetItemAsync<WalletDto>(LocalStorageInfo.Wallet);
@@ -54,7 +53,6 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        Console.WriteLine("Net Balance Component Init");
         var authenticationState = await AuthenticationStateTask;
         IsVerified = authenticationState.User.Claims.Where(x => x.Type == "role" && x.Value == RoleInfo.IsVerified).Any();
     }

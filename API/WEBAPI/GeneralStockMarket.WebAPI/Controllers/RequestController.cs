@@ -36,5 +36,10 @@ namespace GeneralStockMarket.WebAPI.Controllers
             var model = await requestService.GetRequestsAsync(userId);
             return CreateResponseInstance(Response<RequestDto>.Success(model,StatusCodes.Status200OK));
         }
+        //[HttpPost]
+        //public async Task<IActionResult> Post(GenaralCreateDto model)
+        //{
+
+        //}
     }
 }

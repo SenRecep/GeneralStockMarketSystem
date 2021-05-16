@@ -6,17 +6,15 @@
         justify-content: center;
         background-color: var(--color6);
         padding: 1rem;
-        margin: 2rem 16%;
+        margin: 2rem;
         align-items: center;
-        min-height:35vw;
-
-        .form-group{
-            display: flex;
-            flex-direction: column;
-            padding: 2rem;
-
-            
+        form{
+            width: 85%;
+            .validation-message{
+                color: tomato;
+            }
         }
     }
+    
 
 }

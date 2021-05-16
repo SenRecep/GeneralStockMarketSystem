@@ -63,12 +63,12 @@ namespace GeneralStockMarket.WebAPI
                 {
                     Title = "GeneralStockMarket.WebAPI",
                     Version = "v1",
-                    Description = "GeneralStockMarket Ýçin WebApi"
-                    //License = new OpenApiLicense
-                    //{
-                    //    Name = "MIT",
-                    //    Url = new Uri("https://github.com/ignaciojvig/ChatAPI/blob/master/LICENSE")
-                    //}
+                    Description = "GeneralStockMarket Ýçin WebApi",
+                    License = new OpenApiLicense
+                    {
+                        Name = "MIT",
+                        Url = new Uri("https://github.com/SenRecep/GeneralStockMarketSystem/blob/master/LICENSE")
+                    }
 
                 });
 

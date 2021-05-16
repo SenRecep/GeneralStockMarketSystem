@@ -21,8 +21,6 @@ namespace GeneralStockMarket.BlazorServerAppClient.ComponentBases
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            Console.WriteLine("LoginUserComponentBase");
-
             var user = await localStorageService.GetItemAsync<UserDto>(LocalStorageInfo.LoginUser);
 
             if (user == null)
