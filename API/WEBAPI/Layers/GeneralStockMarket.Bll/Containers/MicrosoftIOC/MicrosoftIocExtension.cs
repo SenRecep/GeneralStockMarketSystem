@@ -45,6 +45,9 @@ namespace GeneralStockMarket.Bll.Containers.MicrosoftIOC
             services.AddScoped<IWalletService, WalletManager>();
             services.AddScoped<IWalletRepository, EfWalletRepository>();
 
+            services.AddScoped<IProductDepositRequestService, ProductDepositRequestManager>();
+            services.AddScoped<IProductDepositRequestRepository, EfProductDepositRequestRepository>();
+
             services.AddScoped<IRequestService, RequestManager>();
 
 

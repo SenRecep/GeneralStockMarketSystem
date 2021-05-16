@@ -13,6 +13,15 @@ namespace GeneralStockMarket.Bll.Mapping
             CreateMap<DepositRequest, DepositRequestDto>().ReverseMap();
             CreateMap<NewTypeRequest, NewTypeRequestDto>().ReverseMap();
             CreateMap<ProductDepositRequest, ProductDepositRequestDto>().ReverseMap();
+
+
+            CreateMap<DepositRequest, CreateDepositRequest>().ReverseMap();
+            CreateMap<NewTypeRequest, CreateNewTypeRequest>().ReverseMap();
+            CreateMap<ProductDepositRequest, CreateProductDepositRequest>().ReverseMap();
+
+            CreateMap<GenaralCreateDto,CreateDepositRequest>();
+            CreateMap<GenaralCreateDto,CreateProductDepositRequest>();
+            CreateMap<GenaralCreateDto,CreateNewTypeRequest>();
         }
     }
 }

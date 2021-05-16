@@ -48,6 +48,10 @@
                 text-decoration: none;
                 color: var(--color6);
 
+                &.completed{
+                    background-color: #ADFF2F;
+                }
+
                 .detail {
                     border-top: 1px solid black;
                     padding: 0.5rem;

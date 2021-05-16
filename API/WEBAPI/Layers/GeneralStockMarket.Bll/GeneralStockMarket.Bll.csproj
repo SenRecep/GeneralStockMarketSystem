@@ -5,14 +5,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\DTO\GeneralStockMarket.DTO.Validation\GeneralStockMarket.DTO.Validation.csproj" />
-    <ProjectReference Include="..\..\..\Shared\GeneralStockMarket.ApiShared\GeneralStockMarket.ApiShared.csproj" />
-    <ProjectReference Include="..\GeneralStockMarket.Dal\GeneralStockMarket.Dal.csproj" />
+    <Compile Remove="Concrete\**" />
+    <Compile Remove="Helpers\**" />
+    <EmbeddedResource Remove="Concrete\**" />
+    <EmbeddedResource Remove="Helpers\**" />
+    <None Remove="Concrete\**" />
+    <None Remove="Helpers\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Helpers\" />
-    <Folder Include="Concrete\" />
+    <ProjectReference Include="..\..\..\..\DTO\GeneralStockMarket.DTO.Validation\GeneralStockMarket.DTO.Validation.csproj" />
+    <ProjectReference Include="..\..\..\Shared\GeneralStockMarket.ApiShared\GeneralStockMarket.ApiShared.csproj" />
+    <ProjectReference Include="..\GeneralStockMarket.Dal\GeneralStockMarket.Dal.csproj" />
   </ItemGroup>
 
   <ItemGroup>
