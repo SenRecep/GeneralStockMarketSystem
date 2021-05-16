@@ -36,6 +36,14 @@
                 text-decoration: none;
                 color: var(--color6);
 
+
+                &.approved{
+                    background-color: #ADFF2F;
+                }
+                &.rejected{
+                    background-color: #ff4444;
+                }
+
                 .detail {
                     border-top: 1px solid black;
                     padding: 0.5rem;

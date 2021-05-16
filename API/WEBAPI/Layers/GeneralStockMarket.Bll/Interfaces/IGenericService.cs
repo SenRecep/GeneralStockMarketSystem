@@ -16,6 +16,7 @@ namespace GeneralStockMarket.Bll.Interfaces
         public Task<IEnumerable<D>> GetAllByUserIdAsync<D>(Guid id) where D : IDTO;
 
         public Task<D> GetByIdAsync<D>(Guid id) where D : IDTO;
+        public Task<D> GetByUserIdAsync<D>(Guid id);
 
         public Task<T> AddAsync<D>(D dto) where D : IDTO;
         public Task UpdateAsync<D>(D dto) where D : IDTO;

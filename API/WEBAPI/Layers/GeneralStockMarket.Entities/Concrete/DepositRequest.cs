@@ -8,7 +8,7 @@ namespace GeneralStockMarket.Entities.Concrete
     public class DepositRequest : EntityBase, IDepositRequest
     {
         public string Description { get; set; }
-        public bool Verify { get; set; }
+        public bool? Verify { get; set; }
         public Guid UserId { get; set; }
         public double Amount { get; set; }
     }

@@ -12,6 +12,8 @@ namespace GeneralStockMarket.Bll.Mapping
         {
             CreateMap<Wallet, WalletDto>().ReverseMap();
             CreateMap<Wallet, WalletCreateDto>().ReverseMap();
+            CreateMap<Wallet, WalletUpdateDto>().ReverseMap();
+            CreateMap<WalletDto, WalletUpdateDto>().ReverseMap();
         }
     }
 }

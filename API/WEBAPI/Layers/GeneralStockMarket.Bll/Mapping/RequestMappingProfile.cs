@@ -1,6 +1,7 @@
 ﻿
 using AutoMapper;
 
+using GeneralStockMarket.DTO.General;
 using GeneralStockMarket.DTO.Request;
 using GeneralStockMarket.Entities.Concrete;
 
@@ -13,6 +14,16 @@ namespace GeneralStockMarket.Bll.Mapping
             CreateMap<DepositRequest, DepositRequestDto>().ReverseMap();
             CreateMap<NewTypeRequest, NewTypeRequestDto>().ReverseMap();
             CreateMap<ProductDepositRequest, ProductDepositRequestDto>().ReverseMap();
+
+
+            CreateMap<DeleteDto, DepositRequest>();
+            CreateMap<DeleteDto, NewTypeRequest>();
+            CreateMap<DeleteDto, ProductDepositRequest>();
+
+
+            CreateMap<VerifyDto, DepositRequest>();
+            CreateMap<VerifyDto, NewTypeRequest>();
+            CreateMap<VerifyDto, ProductDepositRequest>();
 
 
             CreateMap<DepositRequest, CreateDepositRequest>().ReverseMap();

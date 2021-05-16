@@ -38,6 +38,7 @@ namespace GeneralStockMarket.Dal.Concrete.EntityFrameworkCore.Repositories
 
         #region Get
         public async Task<T> GetByIdAsync(Guid id) => await table.FindAsync(id);
+        public async Task<T> GetByUserIdAsync(Guid id) => await table.FirstOrDefaultAsync(x => !x.IsDeleted && ((IUserDependent)x).UserId == id);
         #endregion
 
         #region CUD

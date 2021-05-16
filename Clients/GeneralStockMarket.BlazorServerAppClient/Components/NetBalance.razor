@@ -33,17 +33,14 @@ else
         {
             if (IsVerified)
             {
-                var wallet = await localStorageService.GetItemAsync<WalletDto>(LocalStorageInfo.Wallet);
-                if (wallet is null)
+                WalletDto dto=null;
+                var walletResponse = await walletService.GetWalletAsync();
+                if (walletResponse.IsSuccessful)
                 {
-                    var walletResponse = await walletService.GetWalletAsync();
-                    if (walletResponse.IsSuccessful)
-                    {
-                        await localStorageService.SetItemAsync(LocalStorageInfo.Wallet, walletResponse.Data);
-                        wallet = walletResponse.Data;
-                    }
-                    Balance = wallet is not null?wallet.Money.ToString():"Hata";
+                    await localStorageService.SetItemAsync(LocalStorageInfo.Wallet, walletResponse.Data);
+                    dto = walletResponse.Data;
                 }
+                Balance = dto is not null? dto.Money.ToString():"Hata";
             }
             IsLoading = false;
             StateHasChanged();

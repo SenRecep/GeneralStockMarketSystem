@@ -9,6 +9,8 @@ namespace GeneralStockMarket.Bll.Interfaces
     public interface IProductDepositRequestService
     {
         public Task<IEnumerable<ProductDepositRequest>> GetAllByUserIdWhitAsync(Guid id);
+        public Task<IEnumerable<ProductDepositRequest>> GetAllIncludeProductAsync();
+        public Task<ProductDepositRequest> GetByProductIdWhitUserIdAsync(Guid userId, Guid productId);
 
     }
 }

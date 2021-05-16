@@ -5,138 +5,59 @@
 <link href="/css/Client/dist/request.css" rel="stylesheet" />
 <div class="page request-page">
     <PageHeader Title="İstekler" />
-
     @if (IsLoading)
     {
-<Loading /> }
-else
-{
-<div class="section-one">
-    <a> <i class="fas fa-clipboard-list"></i></a>
-    <a href="/requestadd"> <i class="fas fa-plus-square"></i></a>
-</div>
-                <div class="accordion" id="accordion">
-                    <ul>
-                        @foreach (var item in RequestDto.DepositRequestDtos.Where(x => !x.Verify).ToList())
-                        {
-                    <li>
-                        <a data-toggle="collapse" class="@(item.Verify?"completed":"")" href="#accord-@IdCounter" aria-expanded="false">
-                            <div class="outer-div">
-                                <div class="px-2">
-                                    <p class="text-truncate">İstek Tipi: TL Yatırma</p>
-                                    <p class="text-truncate">Miktar:@item.Amount</p>
-                                </div>
-                                <button><i class="far fa-trash-alt"></i></button>
-                            </div>
-                            <div id="accord-@(IdCounter++)" data-parent="#accordion" class="collapse in detail" aria-expanded="true">
-                                @item.Description
-                            </div>
-                        </a>
-                    </li>}
-                        @foreach (var item in RequestDto.ProductDepositRequestDtos.Where(x => !x.Verify).ToList())
-                        {
-                    <li>
-                        <a data-toggle="collapse" class="@(item.Verify?"completed":"")" href="#accord-@IdCounter" aria-expanded="false">
-                            <div class="outer-div">
-                                <div class="px-2">
-                                    <p class="text-truncate">İstek Tipi: Ürün Ekleme</p>
-                                    <p class="text-truncate">Miktar:@item.Amount</p>
-                                </div>
-                                <button><i class="far fa-trash-alt"></i></button>
-                            </div>
-                            <div id="accord-@(IdCounter++)" data-parent="#accordion" class="collapse in detail" aria-expanded="true">
-                                <h1>@item.Product.Name</h1> 
-                                @item.Description
-                            </div>
-                        </a>
-                    </li>
-}
-                        @foreach (var item in RequestDto.NewTypeRequestDtos.Where(x => !x.Verify).ToList())
-                        {
-                    <li>
-                        <a data-toggle="collapse" class="@(item.Verify?"completed":"")" href="#accord-@IdCounter" aria-expanded="false">
-                            <div class="outer-div">
-                                <div class="px-2">
-                                    <p class="text-truncate">İstek Tipi: Yeni Ürün Tipi</p>
-                                    <p class="text-truncate">Ürün Adı: @item.Name</p>
-                                </div>
-                                <button><i class="far fa-trash-alt"></i></button>
-                            </div>
-                            <div id="accord-@(IdCounter++)" data-parent="#accordion" class="collapse in detail" aria-expanded="true">
-                                @item.Description
-                            </div>
-                        </a>
-                    </li>
-}
-
-                        @foreach (var item in RequestDto.DepositRequestDtos.Where(x => x.Verify).ToList())
-                        {
-                    <li>
-                        <a data-toggle="collapse" class="@(item.Verify?"completed":"")" href="#accord-@IdCounter" aria-expanded="false">
-                            <div class="outer-div">
-                                <div class="px-2">
-                                    <p class="text-truncate">İstek Tipi: TL Yatırma</p>
-                                    <p class="text-truncate">Miktar:@item.Amount</p>
-                                </div>
-                                <button><i class="far fa-trash-alt"></i></button>
-                            </div>
-                            <div id="accord-@(IdCounter++)" data-parent="#accordion" class="collapse in detail" aria-expanded="true">
-                                @item.Description
-                            </div>
-                        </a>
-                    </li>}
-                        @foreach (var item in RequestDto.ProductDepositRequestDtos.Where(x => x.Verify).ToList())
-                        {
-                    <li>
-                        <a data-toggle="collapse" class="@(item.Verify?"completed":"")" href="#accord-@IdCounter" aria-expanded="false">
-                            <div class="outer-div">
-                                <div class="px-2">
-                                    <p class="text-truncate">İstek Tipi: Ürün Ekleme</p>
-                                    <p class="text-truncate">Miktar:@item.Amount</p>
-                                </div>
-                                <button><i class="far fa-trash-alt"></i></button>
-                            </div>
-                            <div id="accord-@(IdCounter++)" data-parent="#accordion" class="collapse in detail" aria-expanded="true">
-                                @item.Product.Name
-                                @item.Description
-                            </div>
-                        </a>
-                    </li>
-}
-                        @foreach (var item in RequestDto.NewTypeRequestDtos.Where(x => x.Verify).ToList())
-                        {
-                    <li>
-                        <a data-toggle="collapse" class="@(item.Verify?"completed":"")" href="#accord-@IdCounter" aria-expanded="false">
-                            <div class="outer-div">
-                                <div class="px-2">
-                                    <p class="text-truncate">İstek Tipi: Yeni Ürün Tipi</p>
-                                    <p class="text-truncate">Ürün Adı: @item.Name</p>
-                                </div>
-                                <button><i class="far fa-trash-alt"></i></button>
-                            </div>
-                            <div id="accord-@(IdCounter++)" data-parent="#accordion" class="collapse in detail" aria-expanded="true">
-                                @item.Description
-                            </div>
-                        </a>
-                    </li>
-}
-                    </ul>
-                </div>}
+        <Loading /> }
+    else
+    {
+        <div class="section-one">
+            <a> <i class="fas fa-clipboard-list"></i></a>
+            <a href="/requestadd"> <i class="fas fa-plus-square"></i></a>
+        </div>
+        <div class="accordion" id="accordion">
+            <ul>
+                @foreach (var item in RequestDto.DepositRequestDtos)
+                {
+                    <RequestRow OnClick="ClickHandler" Index="@(IdCounter++)" Id="@item.Id" Verify="@item.Verify" Type="RequestType.Deposit" Description="@item.Description" Amount="@item.Amount.ToString()" Date="@item.CreatedTime" />
+                }
+                @foreach (var item in RequestDto.ProductDepositRequestDtos)
+                {
+                    <RequestRow OnClick="ClickHandler" Index="@(IdCounter++)" Id="@item.Id" Verify="@item.Verify" Type="RequestType.Product" ProductName="@item.Product.Name" Description="@item.Description" Amount="@item.Amount.ToString()" Date="@item.CreatedTime" />
+                }
+                @foreach (var item in RequestDto.NewTypeRequestDtos)
+                {
+                    <RequestRow OnClick="ClickHandler" Index="@(IdCounter++)" Id="@item.Id" Verify="@item.Verify" Type="RequestType.NewType" Description="@item.Description" Amount="@item.Name" Date="@item.CreatedTime" />
+                }
+            </ul>
+        </div>}
 
 </div>
 
 
-@code{ public bool IsLoading { get; set; } = true;
+@code{
+    public bool IsLoading { get; set; } = true;
     public RequestDto RequestDto { get; set; }
 
     public int IdCounter { get; set; } = 0;
 
+    protected async Task ClickHandler((RequestType Type, Guid Id) data)
+    {
+        IsLoading = true;
+        await requestService.DeleteRequestAsync(data.Type, data.Id);
+        await InitAsync();
+    }
 
-    protected override async Task OnInitializedAsync()
+    protected async Task InitAsync()
     {
         var requestResponse = await requestService.GetRequestsAsync();
         if (requestResponse.IsSuccessful)
             RequestDto = requestResponse.Data;
         IsLoading = false;
         StateHasChanged();
-    } }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await InitAsync();
+    }
+}

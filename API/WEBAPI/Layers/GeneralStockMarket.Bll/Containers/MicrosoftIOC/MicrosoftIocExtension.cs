@@ -48,12 +48,17 @@ namespace GeneralStockMarket.Bll.Containers.MicrosoftIOC
             services.AddScoped<IProductDepositRequestService, ProductDepositRequestManager>();
             services.AddScoped<IProductDepositRequestRepository, EfProductDepositRequestRepository>();
 
+            services.AddScoped<IProductItemService, ProductItemManager>();
+            services.AddScoped<IProductItemRepository, EfProductItemRepository>();
+
             services.AddScoped<IRequestService, RequestManager>();
 
 
             services.AddScoped<ISharedIdentityService,SharedIdentityService>();
 
             services.AddAutoMapper(typeof(ProductMappingProfile));
+            services.AddScoped<ICustomMapper, CustomMapper>();
+
         }
 
         public static void AddValidationDependencies(this IMvcBuilder mvcBuilder)

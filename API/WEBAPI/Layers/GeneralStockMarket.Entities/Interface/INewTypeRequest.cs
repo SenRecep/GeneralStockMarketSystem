@@ -8,6 +8,6 @@ namespace GeneralStockMarket.Entities.Interface
     {
         public string Name { get; set; }
         public string Description { get; set; }
-        public bool Verify { get; set; }
+        public bool? Verify { get; set; }
     }
 }

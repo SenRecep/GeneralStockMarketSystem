@@ -15,6 +15,7 @@ namespace GeneralStockMarket.Dal.Interface
         public Task<IEnumerable<T>> GetAllByUserIdAsync(Guid id);
 
         public Task<T> GetByIdAsync(Guid id);
+        public Task<T> GetByUserIdAsync(Guid id);
 
         public Task<T> AddAsync(T entity);
         public Task UpdateAsync(T entity);

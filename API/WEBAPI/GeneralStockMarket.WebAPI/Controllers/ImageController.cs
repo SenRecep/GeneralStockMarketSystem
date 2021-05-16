@@ -16,6 +16,7 @@ namespace GeneralStockMarket.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [AllowAnonymous]
     public class ImageController : CustomControllerBase
     {
         private readonly IWebHostEnvironment webHostEnvironment;

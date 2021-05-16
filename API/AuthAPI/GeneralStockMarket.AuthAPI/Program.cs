@@ -37,8 +37,11 @@ namespace GeneralStockMarket.AuthAPI
 
                 ConfigurationDbContext configurationDbContext = services.GetRequiredService<ConfigurationDbContext>();
                 ApplicationDbContext applicationDbContext = services.GetRequiredService<ApplicationDbContext>();
+                PersistedGrantDbContext  persistedGrantDbContext = services.GetRequiredService<PersistedGrantDbContext>();
 
                 await applicationDbContext.Database.MigrateAsync();
+                await configurationDbContext.Database.MigrateAsync();
+                await persistedGrantDbContext.Database.MigrateAsync();
 
                 List<Task> tasks = new List<Task>
                 {

@@ -17,7 +17,13 @@ namespace GeneralStockMarket.Bll.Managers
             this.productDepositRequestRepository = productDepositRequestRepository;
         }
 
-        public Task<IEnumerable<ProductDepositRequest>> GetAllByUserIdWhitAsync(Guid id) =>
-            productDepositRequestRepository.GetAllByUserIdWhitAsync(id);
+        public async Task<IEnumerable<ProductDepositRequest>> GetAllByUserIdWhitAsync(Guid id) =>
+          await productDepositRequestRepository.GetAllByUserIdWhitAsync(id);
+
+        public async Task<IEnumerable<ProductDepositRequest>> GetAllIncludeProductAsync() =>
+          await productDepositRequestRepository.GetAllIncludeProductAsync();
+
+        public async Task<ProductDepositRequest> GetByProductIdWhitUserIdAsync(Guid userId, Guid productId) =>
+            await productDepositRequestRepository.GetByProductIdWhitUserIdAsync(userId, productId);
     }
 }

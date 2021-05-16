@@ -17,11 +17,13 @@ namespace GeneralStockMarket.Bll.Managers
     {
         private readonly IGenericRepository<T> genericRepository;
         private readonly IMapper mapper;
+        private readonly ICustomMapper customMapper;
 
-        public GenericManager(IGenericRepository<T> genericRepository, IMapper mapper)
+        public GenericManager(IGenericRepository<T> genericRepository, IMapper mapper,ICustomMapper customMapper)
         {
             this.genericRepository = genericRepository;
             this.mapper = mapper;
+            this.customMapper = customMapper;
         }
 
         public async Task<T> AddAsync<D>(D dto)
@@ -60,19 +62,31 @@ namespace GeneralStockMarket.Bll.Managers
             return result;
         }
 
+        public async Task<D> GetByUserIdAsync<D>(Guid id)
+        {
+            T entity = await genericRepository.GetByUserIdAsync(id);
+            D result = mapper.Map<D>(entity);
+            return result;
+        }
+
         public async Task RemoveAsync<D>(D dto, bool hardDelete = false) where D : IDTO
         {
-            T entity = mapper.Map<T>(dto);
-            var deletedItem = await genericRepository.GetByIdAsync(entity.Id);
-            await genericRepository.RemoveAsync(deletedItem, hardDelete);
+            T dummyEntity = mapper.Map<T>(dto);
+            var orjinal = await genericRepository.GetByIdAsync(dummyEntity.Id);
+            orjinal = customMapper.Map(dto, orjinal);
+            await genericRepository.RemoveAsync(orjinal,hardDelete);
         }
 
         public async Task UpdateAsync<D>(D dto) where D : IDTO
         {
-            T entity = mapper.Map<T>(dto);
-            await genericRepository.UpdateAsync(entity);
+            T  dummyEntity = mapper.Map<T>(dto);
+            var orjinal = await genericRepository.GetByIdAsync(dummyEntity.Id);
+            orjinal = customMapper.Map(dto,orjinal);
+            await genericRepository.UpdateAsync(orjinal);
         }
 
         public async Task<bool> Commit(bool state = true) => await genericRepository.Commit(state);
+
+       
     }
 }

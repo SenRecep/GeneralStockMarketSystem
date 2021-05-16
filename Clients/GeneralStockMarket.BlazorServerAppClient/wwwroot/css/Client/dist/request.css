@@ -38,8 +38,11 @@
   text-decoration: none;
   color: var(--color6);
 }
-.request-page ul li a.completed {
+.request-page ul li a.approved {
   background-color: #ADFF2F;
+}
+.request-page ul li a.rejected {
+  background-color: #ff4444;
 }
 .request-page ul li a .detail {
   border-top: 1px solid black;

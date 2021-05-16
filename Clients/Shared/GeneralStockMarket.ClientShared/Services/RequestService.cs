@@ -10,6 +10,7 @@ using GeneralStockMarket.ClientShared.Services.Interfaces;
 using GeneralStockMarket.CoreLib.Response;
 using GeneralStockMarket.DTO.Product;
 using GeneralStockMarket.DTO.Request;
+using GeneralStockMarket.DTO.Request.Enums;
 
 using Microsoft.AspNetCore.Http;
 
@@ -23,6 +24,18 @@ namespace GeneralStockMarket.ClientShared.Services
         {
             this.httpClient = httpClient;
         }
+
+        public async Task<Response<NoContent>> DeleteRequestAsync(RequestType type, Guid id)
+        {
+            var httpResponse = await httpClient.DeleteAsync($"api/request/{type}/{id}");
+            return await httpResponse.Content.ReadFromJsonAsync<Response<NoContent>>();
+        }
+
+        public async Task<Response<RequestDto>> GetAllRequestsAsync()
+        {
+            return await httpClient.GetFromJsonAsync<Response<RequestDto>>("api/request/getall");
+        }
+
         public async Task<Response<RequestDto>> GetRequestsAsync()
         {
             return await httpClient.GetFromJsonAsync<Response<RequestDto>>("api/request");
@@ -32,6 +45,12 @@ namespace GeneralStockMarket.ClientShared.Services
         {
             var httpResponse = await httpClient.PostAsJsonAsync("api/request", dto);
             return  await httpResponse.Content.ReadFromJsonAsync<Response<NoContent>>();
+        }
+
+        public async Task<Response<NoContent>> VerifyUpdateRequestAsync(bool mode,RequestType type, Guid id)
+        {
+            var httpResponse = await httpClient.DeleteAsync($"api/request/verifyupdate/{mode}/{type}/{id}");
+            return await httpResponse.Content.ReadFromJsonAsync<Response<NoContent>>();
         }
     }
 }

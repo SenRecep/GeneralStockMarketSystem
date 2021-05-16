@@ -9,5 +9,7 @@ namespace GeneralStockMarket.Dal.Interface
     public interface IProductDepositRequestRepository
     {
         public Task<IEnumerable<ProductDepositRequest>> GetAllByUserIdWhitAsync(Guid id);
+        public  Task<IEnumerable<ProductDepositRequest>> GetAllIncludeProductAsync();
+        public Task<ProductDepositRequest> GetByProductIdWhitUserIdAsync(Guid userId,Guid productId);
     }
 }

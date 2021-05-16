@@ -48,8 +48,11 @@
                 text-decoration: none;
                 color: var(--color6);
 
-                &.completed{
+                &.approved{
                     background-color: #ADFF2F;
+                }
+                &.rejected{
+                    background-color: #ff4444;
                 }
 
                 .detail {

@@ -11,10 +11,13 @@ using GeneralStockMarket.Bll.StringInfos;
 using GeneralStockMarket.Core.Entities.Abstract;
 using GeneralStockMarket.CoreLib.Interfaces;
 using GeneralStockMarket.CoreLib.Response;
+using GeneralStockMarket.CoreLib.StringInfo;
+using GeneralStockMarket.DTO.General;
 using GeneralStockMarket.DTO.Request;
 using GeneralStockMarket.DTO.Request.Enums;
 using GeneralStockMarket.Entities.Concrete;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -57,6 +60,15 @@ namespace GeneralStockMarket.WebAPI.Controllers
             RequestDto model = await requestService.GetRequestsAsync(userId);
             return CreateResponseInstance(Response<RequestDto>.Success(model, StatusCodes.Status200OK));
         }
+
+        [HttpGet("GetAll")]
+        [Authorize(Roles =RoleInfo.DeveloperOrAdmin)]
+        public async Task<IActionResult> GetAll()
+        {
+            RequestDto model = await requestService.GetAllRequestsAsync();
+            return CreateResponseInstance(Response<RequestDto>.Success(model, StatusCodes.Status200OK));
+        }
+
         [HttpPost]
         public async Task<IActionResult> Post(GenaralCreateDto model)
         {
@@ -77,17 +89,17 @@ namespace GeneralStockMarket.WebAPI.Controllers
                 {
                     case RequestType.Deposit:
                         entity = await genericDepositRequestService.AddAsync(dto);
-                        entity.CreatedUserId = Guid.Parse(UserStringInfo.SystemUserId);
+                        entity.CreatedUserId = userId;
                         await genericDepositRequestService.Commit();
                         break;
                     case RequestType.Product:
                         entity = await genericProductRequestService.AddAsync(dto);
-                        entity.CreatedUserId = Guid.Parse(UserStringInfo.SystemUserId);
+                        entity.CreatedUserId = userId;
                         await genericProductRequestService.Commit();
                         break;
                     case RequestType.NewType:
                         entity = await genericNewTypeRequestService.AddAsync(dto);
-                        entity.CreatedUserId = Guid.Parse(UserStringInfo.SystemUserId);
+                        entity.CreatedUserId = userId;
                         await genericNewTypeRequestService.Commit();
                         break;
                     default:
@@ -106,6 +118,88 @@ namespace GeneralStockMarket.WebAPI.Controllers
             }
             return CreateResponseInstance(response);
 
+        }
+
+        [HttpDelete("{type}/{id}")]
+        public async Task<IActionResult> Delete(RequestType type, Guid id)
+        {
+            Guid userId = Guid.Parse(sharedIdentityService.GetUserId);
+            Response<NoContent> response = null;
+            try
+            {
+                DeleteDto deleteDto = new() { Id = id ,UpdateUserId= userId };
+                switch (type)
+                {
+                    case RequestType.Deposit:
+                        await genericDepositRequestService.RemoveAsync(deleteDto);
+                        await genericDepositRequestService.Commit();
+                        break;
+                    case RequestType.Product:
+                        await genericProductRequestService.RemoveAsync(deleteDto);
+                        await genericProductRequestService.Commit();
+                        break;
+                    case RequestType.NewType:
+                        await genericNewTypeRequestService.RemoveAsync(deleteDto);
+                        await genericNewTypeRequestService.Commit();
+                        break;
+                    default:
+                        throw new CustomException();
+                }
+                response = Response<NoContent>.Success(StatusCodes.Status204NoContent);
+            }
+            catch
+            {
+                response = Response<NoContent>.Fail(
+                    statusCode: StatusCodes.Status400BadRequest,
+                    isShow: true,
+                    path: "[DELETE] api/request",
+                    errors: "Desteklenmeyen istek tipi"
+                    );
+            }
+            return CreateResponseInstance(response);
+        }
+
+        [HttpDelete("VerifyUpdate/{verify}/{type}/{id}")]
+        [Authorize(Roles = RoleInfo.DeveloperOrAdmin)]
+        public async Task<IActionResult> VerifyUpdate(bool verify, RequestType type, Guid id)
+        {
+            Guid userId = Guid.Parse(sharedIdentityService.GetUserId);
+            Response<NoContent> response = null;
+            try
+            {
+                VerifyDto verifyDto = new() { Id = id, UpdateUserId = userId,Verify= verify };
+                switch (type)
+                {
+                    case RequestType.Deposit:
+                        await genericDepositRequestService.UpdateAsync(verifyDto);
+                        await genericDepositRequestService.Commit();
+                        await requestService.DepositRequestVerifyConditionAsync(verifyDto);
+
+                        break;
+                    case RequestType.Product:
+                        await genericProductRequestService.UpdateAsync(verifyDto);
+                        await genericProductRequestService.Commit();
+                        await requestService.ProductDepositRequestVerifyConditionAsync(verifyDto);
+                        break;
+                    case RequestType.NewType:
+                        await genericNewTypeRequestService.UpdateAsync(verifyDto);
+                        await genericNewTypeRequestService.Commit();
+                        break;
+                    default:
+                        throw new CustomException();
+                }
+                response = Response<NoContent>.Success(StatusCodes.Status204NoContent);
+            }
+            catch
+            {
+                response = Response<NoContent>.Fail(
+                    statusCode: StatusCodes.Status400BadRequest,
+                    isShow: true,
+                    path: "[DELETE] api/request",
+                    errors: "Desteklenmeyen istek tipi"
+                    );
+            }
+            return CreateResponseInstance(response);
         }
     }
 }

@@ -4,14 +4,16 @@ using GeneralStockMarket.Dal.Concrete.EntityFrameworkCore.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GeneralStockMarket.WebAPI.Migrations
 {
     [DbContext(typeof(GeneralStockMarketDbContext))]
-    partial class GeneralStockMarketDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210516174158_RequestVerify")]
+    partial class RequestVerify
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

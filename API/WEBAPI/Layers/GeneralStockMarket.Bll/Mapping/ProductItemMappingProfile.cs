@@ -11,6 +11,9 @@ namespace GeneralStockMarket.Bll.Mapping
         public ProductItemMappingProfile()
         {
             CreateMap<ProductItem, ProductItemDto>().ReverseMap();
+
+            CreateMap<ProductItemCreateDto, ProductItem>();
+            CreateMap<ProductItemUpdateDto, ProductItem>().ReverseMap();
         }
     }
 }

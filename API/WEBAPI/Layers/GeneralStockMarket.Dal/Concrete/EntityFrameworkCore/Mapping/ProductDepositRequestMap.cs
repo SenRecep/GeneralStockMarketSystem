@@ -15,6 +15,7 @@ namespace GeneralStockMarket.Dal.Concrete.EntityFrameworkCore.Mapping
             builder.Property(x => x.Verify).HasDefaultValue(false).IsRequired();
             builder.Property(x => x.UserId).IsRequired();
             builder.Property(x => x.Amount).HasDefaultValue(0.0).IsRequired();
+            builder.Property(x => x.Verify).HasDefaultValue(null).IsRequired(false);
         }
     }
 }

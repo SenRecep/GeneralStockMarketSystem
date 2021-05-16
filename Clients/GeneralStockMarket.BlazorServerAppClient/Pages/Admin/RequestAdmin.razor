@@ -1,30 +1,62 @@
-@page "/admin/requestadmin"
+@page "/admin/request"
+@inject IRequestService requestService
 @attribute [Authorize(Roles = RoleInfo.DeveloperOrAdmin)]
 
 <link href="/css/Client/dist/requestadmin.css" rel="stylesheet" />
 
 <div class="page requestadmin-page">
     <PageHeader Title="İstek Onay" />
-    <ul>
-        <div class="accordion" id="accordionExample">
-            <li>
-                <a data-toggle="collapse" href="#c1">
-                    <div class="outer-div row p-2 ">
-                        <div class="px-2 ">
-                            <p class="text-truncate">İstek Tipi: Ürün ekleme</p>
-                            <p class="text-truncate">Miktar: 550</p>
-                        </div>
-                        <div class="d-flex flex-row justify-content-end ">
-                            <button onclick="window.location.href='/admin/requestedit'"><i class="far fa-thumbs-up mr-2"></i></button>
-                            <button onclick="alert('Siliyom bak ona göre')"><i class="far fa-thumbs-down"></i></button>
-                        </div>
-                    </div>
-                    <div id="c1" data-parent="#accordionExample" class="collapse in detail" aria-expanded="true">
-                        <pre class="mb-0">İşlem tarihi:12.03.21<br/>İlgili ürün:Simit<br/>Burada açıklamamız var.</pre>
-                    </div>
-                </a>
-            </li>
+    @if (IsLoading)
+    {
+        <Loading />
+    }
+    else
+    {
+        <div class="accordion" id="accordion">
+            <ul>
+                @foreach (var item in RequestDto.DepositRequestDtos)
+                {
+                    <RequestRowAdmin OnClick="ClickHandler" Index="@(IdCounter++)" Id="@item.Id" Verify="@item.Verify" Type="RequestType.Deposit" Description="@item.Description" Amount="@item.Amount.ToString()" Date="@item.CreatedTime" />
+                }
+                @foreach (var item in RequestDto.ProductDepositRequestDtos)
+                {
+                    <RequestRowAdmin OnClick="ClickHandler" Index="@(IdCounter++)" Id="@item.Id" Verify="@item.Verify" Type="RequestType.Product" ProductName="@item.Product.Name" Description="@item.Description" Amount="@item.Amount.ToString()" Date="@item.CreatedTime" />
+                }
+                @foreach (var item in RequestDto.NewTypeRequestDtos)
+                {
+                    <RequestRowAdmin OnClick="ClickHandler" Index="@(IdCounter++)" Id="@item.Id" Verify="@item.Verify" Type="RequestType.NewType" Description="@item.Description" Amount="@item.Name" Date="@item.CreatedTime" />
+                }
+            </ul>
         </div>
-
-    </ul>
+    }
 </div>
+
+
+
+@code{
+    public bool IsLoading { get; set; } = true;
+    public RequestDto RequestDto { get; set; }
+
+    public int IdCounter { get; set; } = 0;
+
+    protected async Task ClickHandler((RequestType Type, Guid Id,bool Mode) data)
+    {
+        IsLoading = true;
+        var response = await requestService.VerifyUpdateRequestAsync(data.Mode, data.Type, data.Id);
+        await InitAsync();
+    }
+
+    protected async Task InitAsync()
+    {
+        var requestResponse = await requestService.GetAllRequestsAsync();
+        if (requestResponse.IsSuccessful)
+            RequestDto = requestResponse.Data;
+        IsLoading = false;
+        StateHasChanged();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await InitAsync();
+    }
+}

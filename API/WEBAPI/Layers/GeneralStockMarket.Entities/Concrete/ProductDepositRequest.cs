@@ -10,7 +10,7 @@ namespace GeneralStockMarket.Entities.Concrete
         public Guid ProductId { get; set; }
         public Product Product { get; set; }
         public string Description { get; set; }
-        public bool Verify { get; set; }
+        public bool? Verify { get; set; }
         public Guid UserId { get; set; }
         public double Amount { get; set; }
     }
