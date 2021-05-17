@@ -63,7 +63,8 @@ namespace GeneralStockMarket.WebAPI.Controllers
             }
             else
             {
-
+                var buyDto=mapper.Map<BuyModel>(tradeCreateDto);
+                
             }
         }
     }
