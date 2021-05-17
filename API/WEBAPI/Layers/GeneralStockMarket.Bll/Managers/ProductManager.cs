@@ -31,11 +31,10 @@ namespace GeneralStockMarket.Bll.Managers
             foreach (Product product in products)
             {
                 ProductDto productDto = mapper.Map<ProductDto>(product);
-                List<MarketItem> notDeletedMarketItems = product.MarketItems.Where(x => !x.IsDeleted && x.InProgress).ToList();
-                if (notDeletedMarketItems.Any())
+                if (product.MarketItems.Any())
                 {
-                    productDto.AvgPrice = notDeletedMarketItems.Sum(x => x.UnitPrice) / notDeletedMarketItems.Count;
-                    productDto.Amount = notDeletedMarketItems.Sum(x => x.Amount);
+                    productDto.Amount = product.MarketItems.Sum(x => x.Amount);
+                    productDto.AvgPrice = product.MarketItems.Select(x => x.UnitPrice*x.Amount).Sum(x=>x) / productDto.Amount;
                 }
                 result.Add(productDto);
             }
@@ -47,11 +46,10 @@ namespace GeneralStockMarket.Bll.Managers
         {
             Product product = await productRepository.GetProductByIdAsync(id);
             ProductTradeDto dto = mapper.Map<ProductTradeDto>(product);
-            List<MarketItem> notDeletedMarketItems = product.MarketItems.Where(x => !x.IsDeleted && x.InProgress).ToList();
             if (product.MarketItems.Any())
             {
-                dto.AvgPrice = notDeletedMarketItems.Sum(x => x.UnitPrice) / notDeletedMarketItems.Count;
-                dto.Amount = notDeletedMarketItems.Sum(x => x.Amount);
+                dto.Amount = dto.MarketItems.Sum(x => x.Amount);
+                dto.AvgPrice = dto.MarketItems.Select(x => x.UnitPrice * x.Amount).Sum(x => x) / dto.Amount;
             }
             return dto;
         }

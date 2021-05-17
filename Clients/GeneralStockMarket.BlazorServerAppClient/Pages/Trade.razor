@@ -31,7 +31,7 @@
                     <p>Market Stoğu: @ProductTradeDto.Amount</p>
                 </div>
                 <div class="col-sm-5">
-                    <p>Ortalama fiyat: @ProductTradeDto.AvgPrice₺</p>
+                    <p>Ortalama fiyat: @ProductTradeDto.AvgPrice.ToString("N2")₺</p>
                     <p>Bakiye: @WalletDto.Money₺</p>
                 </div>
             </div>
@@ -63,8 +63,8 @@
                     <div class="form-group row">
                         <label for="Price" class="col-sm-1 col-form-label">Fiyat</label>
                         <div class="col-sm-11">
-                            <InputNumber @bind-Value="TradeCreateDto.Price" class="form-control" id="Price" placeholder="Fiyat" />
-                            <ValidationMessage For="() => TradeCreateDto.Price"></ValidationMessage>
+                            <InputNumber @bind-Value="TradeCreateDto.UnitPrice" class="form-control" id="Price" placeholder="Fiyat" />
+                            <ValidationMessage For="() => TradeCreateDto.UnitPrice"></ValidationMessage>
                         </div>
                     </div>
                     <div class="form-group mb-0">
@@ -127,6 +127,8 @@
         if (TradeCreateDto.TradeType == TradeType.Buy && TradeCreateDto.Amount > ProductTradeDto.Amount)
         {
             ErrorMessage = "Piyasada bu miktarda ürün bulunmamaktadır";
+            IsLoading = false;
+            StateHasChanged();
             return;
         }
 

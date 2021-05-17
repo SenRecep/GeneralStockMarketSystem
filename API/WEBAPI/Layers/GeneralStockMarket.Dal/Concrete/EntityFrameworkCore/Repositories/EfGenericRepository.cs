@@ -77,7 +77,7 @@ namespace GeneralStockMarket.Dal.Concrete.EntityFrameworkCore.Repositories
                 await SaveChangesAsync();
                 commitState = true;
             }
-            catch
+            catch (Exception ex)
             {
                 commitState = false;
             }

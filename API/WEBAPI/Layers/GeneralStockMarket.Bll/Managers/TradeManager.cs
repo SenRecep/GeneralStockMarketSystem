@@ -135,10 +135,10 @@ namespace GeneralStockMarket.Bll.Managers
                 }
                 catch
                 {
-                    await genericWalletService.Commit(false);
-                    await genericProductItemRepository.Commit(false);
-                    await genericMarketItemService.Commit(false);
-                    await genericTransactionService.Commit(false);
+                    //await genericWalletService.Commit(false);
+                    //await genericProductItemRepository.Commit(false);
+                    //await genericMarketItemService.Commit(false);
+                    //await genericTransactionService.Commit(false);
                     response = Response<NoContent>.Fail(
                           statusCode: StatusCodes.Status500InternalServerError,
                           isShow: true,
