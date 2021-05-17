@@ -1,5 +1,8 @@
 ﻿using System;
 
+using GeneralStockMarket.DTO.ProductItem;
+using GeneralStockMarket.Entities.Concrete;
+
 namespace GeneralStockMarket.Bll.Models
 {
     public class SellModel
@@ -9,5 +12,6 @@ namespace GeneralStockMarket.Bll.Models
         public Guid WalletId { get; set; }
         public Guid ProductId { get; set; }
         public double UnitPrice { get; set; }
+        public ProductItem ProductItem { get; set; }
     }
 }
