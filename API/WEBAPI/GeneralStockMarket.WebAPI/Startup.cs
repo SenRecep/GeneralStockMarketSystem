@@ -36,6 +36,16 @@ namespace GeneralStockMarket.WebAPI
         {
             services.AddDependencies(Configuration, Environment);
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy", builder =>
+                {
+                    builder.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
+                });
+            });
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, opt =>
                 {
@@ -72,7 +82,7 @@ namespace GeneralStockMarket.WebAPI
                         Url = new Uri("https://github.com/SenRecep/GeneralStockMarketSystem/blob/master/LICENSE")
                     }
 
-                
+
 
                 });
 
@@ -81,58 +91,60 @@ namespace GeneralStockMarket.WebAPI
                 s.IncludeXmlComments(xmlPath);
 
 
-            var jwtSecurityScheme = new OpenApiSecurityScheme
-            {
-                Scheme = "bearer",
-                BearerFormat = "JWT",
-                Name = "JWT Authentication",
-                In = ParameterLocation.Header,
-                Type = SecuritySchemeType.Http,
-                Description = "Put **_ONLY_** your JWT Bearer token on textbox below!",
-
-                Reference = new OpenApiReference
+                var jwtSecurityScheme = new OpenApiSecurityScheme
                 {
-                    Id = JwtBearerDefaults.AuthenticationScheme,
-                    Type = ReferenceType.SecurityScheme
-                }
-            };
+                    Scheme = "bearer",
+                    BearerFormat = "JWT",
+                    Name = "JWT Authentication",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                    Description = "Put **_ONLY_** your JWT Bearer token on textbox below!",
 
-            s.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
+                    Reference = new OpenApiReference
+                    {
+                        Id = JwtBearerDefaults.AuthenticationScheme,
+                        Type = ReferenceType.SecurityScheme
+                    }
+                };
 
-            s.AddSecurityRequirement(new OpenApiSecurityRequirement
+                s.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
+
+                s.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
                     { jwtSecurityScheme, Array.Empty<string>() }
                 });
-        });
+            });
 
 
 
 
         }
 
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-    {
-        if (env.IsDevelopment())
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseDeveloperExceptionPage();
-        }
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
 
-        app.UseSwagger();
-        app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "GeneralStockMarket.WebAPI v1"));
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "GeneralStockMarket.WebAPI v1"));
 
-        app.UseCustomExceptionHandler();
+            app.UseCustomExceptionHandler();
 
-        app.UseStaticFiles();
+            app.UseStaticFiles();
 
-        app.UseRouting();
+            app.UseRouting();
 
-        app.UseAuthentication();
-        app.UseAuthorization();
+            app.UseAuthentication();
+            app.UseAuthorization();
 
-        app.UseEndpoints(endpoints =>
+            app.UseCors("CorsPolicy");
+
+            app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
         });
+        }
     }
-}
 }
