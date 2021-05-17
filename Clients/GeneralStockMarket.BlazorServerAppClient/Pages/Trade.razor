@@ -1,13 +1,14 @@
 ﻿@page "/trade/{Id:guid}"
 @attribute [Authorize(Roles = RoleInfo.IsVerified)]
 @inject IProductService productService
+@inject IWalletService walletService
 @inject PhotoHelper photoHelper
 
 <link href="/css/Client/dist/trade.css" rel="stylesheet" />
 
 <div class="page trade-page">
     <PageHeader Title="Alım/Satım" />
-    @if (ProductTradeDto.IsNull())
+    @if (ProductTradeDto.IsNull() || WalletDto.IsNull())
     {
         <Loading />
     }
@@ -17,7 +18,7 @@
             <div class="row">
                 <div class="col-sm-4 offset-sm-5 d-flex flex-row align-items-center">
                     <img class="img-fluid" src="@(photoHelper.GetProductImageUrl(ProductTradeDto.ImageName))"
-                    alt="product-image" />
+                         alt="product-image" />
                     <p class=" pl-2">
                         @ProductTradeDto.Name
                     </p>
@@ -25,70 +26,63 @@
             </div>
             <div class="row">
                 <div class="col-sm-5 offset-sm-1">
-                    <p>Sahip olunan adet: 1999</p>
-                    <p>Market Stoğu: 17000</p>
+                    <p>Sahip olunan adet: @(UserProductItemDto.IsNotNull()?UserProductItemDto.Amount:0)</p>
+                    <p>Market Stoğu: @ProductTradeDto.Amount</p>
                 </div>
                 <div class="col-sm-5">
-                    <p>Ortalama fiyat: 10.25₺</p>
+                    <p>Ortalama fiyat: @ProductTradeDto.AvgPrice₺</p>
+                    <p>Bakiye: @WalletDto.Money₺</p>
                 </div>
             </div>
 
         </div>
         <div class="section-one">
 
-            <div class="row">
-
+            <div class="row mb-3">
                 <div class="col-sm-6 text-center btn-group offset-sm-3">
-                    <button class="btn btn-success btn-lg">Al</button>
-                    <button class="btn btn-danger btn-lg">Sat</button>
+                    <button @onclick="()=>TradeTypeChange(TradeType.Buy)" class="btn btn-success btn-lg">Al</button>
+                    <button @onclick="()=>TradeTypeChange(TradeType.Sell)" class="btn btn-danger btn-lg">Sat</button>
                 </div>
-
             </div>
-            <form>
-                <div class="form-row">
-                    <div class="form-group col-sm-6">
-                        <input class="form-control mb-2" type="text" />
-                        <input class="form-control mb-2" type="text" />
-                        <input class="form-control" type="submit" />
+            <EditForm Model="TradeCreateDto" OnValidSubmit="ValidSubmit">
+                <FluentValidationValidator></FluentValidationValidator>
+                @if (!ErrorMessage.IsEmpty())
+                {
+                    <p class="text-danger mb-2">@ErrorMessage</p>
+                }
+                <div class="form-group row">
+                    <label for="Amount" class="col-sm-1 col-form-label">Miktar</label>
+                    <div class="col-sm-11">
+                        <InputNumber @bind-Value="TradeCreateDto.Amount" class="form-control" id="Amount" placeholder="Miktar" />
+                        <ValidationMessage For="() => TradeCreateDto.Amount"></ValidationMessage>
                     </div>
                 </div>
-            </form>
+                @if (TradeCreateDto.TradeType == TradeType.Sell)
+                {
+                    <div class="form-group row">
+                        <label for="Price" class="col-sm-1 col-form-label">Fiyat</label>
+                        <div class="col-sm-11">
+                            <InputNumber @bind-Value="TradeCreateDto.Price" class="form-control" id="Price" placeholder="Fiyat" />
+                            <ValidationMessage For="() => TradeCreateDto.Price"></ValidationMessage>
+                        </div>
+                    </div>
+                    <div class="form-group mb-0">
+                        <input type="submit" class="form-control btn-danger" value="SAT">
+                    </div>
+                }
 
+                @if (TradeCreateDto.TradeType == TradeType.Buy)
+                {
+                    <div class="form-group mb-0">
+                        <input type="submit" class="form-control btn-success" value="AL">
+                    </div>
+                }
 
+            </EditForm>
 
         </div>
         <div class="section-one p-0">
             <ul>
-                <li>
-                    <a>
-                        <div class="row">
-                            <p class="col-sm-3">İşlem Adeti: 50</p>
-                            <p class="col-sm-3">Toplam Fiyat: 100₺</p>
-                            <p class="col-sm-3">Birim Fiyat: 2₺</p>
-                            <p class="col-sm-3">İşlem Tarihi: 16.10.21</p>
-                        </div>
-                    </a>
-                </li>
-                <li>
-                    <a>
-                        <div class="row">
-                            <p class="col-sm-3">İşlem Adeti: 50</p>
-                            <p class="col-sm-3">Toplam Fiyat: 100₺</p>
-                            <p class="col-sm-3">Birim Fiyat: 2₺</p>
-                            <p class="col-sm-3">İşlem Tarihi: 16.10.21</p>
-                        </div>
-                    </a>
-                </li>
-                <li>
-                    <a>
-                        <div class="row">
-                            <p class="col-sm-3">İşlem Adeti: 50</p>
-                            <p class="col-sm-3">Toplam Fiyat: 100₺</p>
-                            <p class="col-sm-3">Birim Fiyat: 2₺</p>
-                            <p class="col-sm-3">İşlem Tarihi: 16.10.21</p>
-                        </div>
-                    </a>
-                </li>
                 <li>
                     <a>
                         <div class="row">
@@ -108,14 +102,47 @@
     [Parameter]
     public Guid Id { get; set; }
 
+    public string ErrorMessage { get; set; } = string.Empty;
+
+    public TradeCreateDto TradeCreateDto { get; set; } = new TradeCreateDto();
+
     public ProductTradeDto ProductTradeDto { get; set; } = null;
+
+    public WalletDto WalletDto { get; set; }
+
+    public ProductItemDto UserProductItemDto { get; set; }
+
+    public void TradeTypeChange(TradeType mode)
+    {
+        TradeCreateDto.TradeType = mode;
+    }
+
+    public async Task ValidSubmit()
+    {
+        if (TradeCreateDto.Amount>ProductTradeDto.Amount)
+        {
+            ErrorMessage = "Piyasada bu miktarda ürün bulunmamaktadır";
+            return;
+        }
+    }
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        var productResponse = await productService.GetProductByIdAsync(Id);
-        if (productResponse.IsSuccessful)
-            ProductTradeDto = productResponse.Data;
+        var productResponse = productService.GetProductByIdAsync(Id);
+
+        var walletResponse = walletService.GetWalletAsync();
+
+        await productResponse;
+        if (productResponse.Result.IsSuccessful)
+            ProductTradeDto = productResponse.Result.Data;
+
+        await walletResponse;
+        if (walletResponse.Result.IsSuccessful)
+        {
+            WalletDto = walletResponse.Result.Data;
+            UserProductItemDto = WalletDto.ProductItems.FirstOrDefault(x => x.ProductId == Id);
+        }
     }
 
 }

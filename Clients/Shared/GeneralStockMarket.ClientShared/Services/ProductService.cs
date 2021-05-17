@@ -32,9 +32,9 @@ namespace GeneralStockMarket.ClientShared.Services
             var content = new MultipartFormDataContent();
             content.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("form-data");
             content.Add(new StreamContent(dto.Image, (int)dto.Image.Length), "Image",dto.FileName);
-            var productName = new StringContent(dto.Name, System.Text.Encoding.UTF8);
-            content.Add(productName, "Name");
-            var response= await httpClient.PostAsync("api/product",content);
+            //var productName = new StringContent(dto.Name, System.Text.Encoding.UTF8);
+            //content.Add(productName, "Name");
+            var response= await httpClient.PostAsync($"api/product/{dto.Name}",content);
             return await response.Content.ReadFromJsonAsync<Response<ProductDto>>();
         }
     }

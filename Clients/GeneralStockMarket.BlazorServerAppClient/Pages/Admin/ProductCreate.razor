@@ -121,8 +121,11 @@
                 await requestService.VerifyUpdateRequestAsync(true, RequestType.NewType, RequestId);
             NavigationManager.NavigateTo("/admin/request");
         }
-     
+        else
+        {
         ErrorMessage = GeneralStockMarket.CoreLib.Response.Error.GetError(response.ErrorData);
+        }   
+
         IsLoading = false;
         StateHasChanged();
     }

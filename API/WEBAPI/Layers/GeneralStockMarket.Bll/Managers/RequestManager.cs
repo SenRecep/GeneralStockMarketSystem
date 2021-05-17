@@ -90,11 +90,11 @@ namespace GeneralStockMarket.Bll.Managers
             {
                 var entityDto = await genericProductDepositRequestService.GetByIdAsync<ProductDepositRequestDto>(dto.Id);
                 var walletDto = await genericWalletService.GetByUserIdAsync<WalletDto>(entityDto.CreatedUserId);
-                var productItem = await productItemService.GetByProductIdWhitWalletIdAsync(walletDto.Id, entityDto.ProductId);
+                var productItem = await productItemService.GetByProductIdWithWalletIdAsync(walletDto.Id, entityDto.ProductId);
                 if (productItem == null)
                     productItem = await genericProductItemService.AddAsync(new ProductItemCreateDto()
                     {
-                        CreatedUserId = entityDto.CreatedUserId,
+                        CreatedUserId = entityDto.CreatedUserId, 
                         ProductId = entityDto.ProductId,
                         WalletId = walletDto.Id,
                         Amount = entityDto.Amount

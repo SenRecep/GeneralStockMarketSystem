@@ -90,33 +90,34 @@ namespace GeneralStockMarket.WebAPI.Controllers
         ///<response code="201">Başarıyla eklendi.</response>
         ///<response code="400">Dosya bulunamadı ya da desteklenmiyor.</response>
         ///<response code="500">Ürün resmi yüklenirken hata ile karşılaşıldı</response>
-        [HttpPost]
-        public async Task<IActionResult> Post([FromForm] IFormFile Image, [FromForm] string Name)
+        [HttpPost("{name}")]
+        //[ApiExplorerSettings(IgnoreApi= true)]
+        public async Task<IActionResult> Post([FromForm] IFormFile Image, [FromRoute] string name)
         {
             Guid userId = Guid.Parse(sharedIdentityService.GetUserId);
-        ProductCreateDto productCreateDto = new()
-        {
-            Image = Image,
-            Name = Name
-        };
-        productCreateDto.CreatedUserId = userId;
+            ProductCreateDto productCreateDto = new()
+            {
+                Image = Image,
+                Name = name
+            };
+            productCreateDto.CreatedUserId = userId;
             var imageUploadResponse = await imageService.UploadImageAsync(productCreateDto.Image);
             if (!imageUploadResponse.IsSuccessful)
                 return CreateResponseInstance(imageUploadResponse);
 
-        productCreateDto.ImageName = imageUploadResponse.Data;
+            productCreateDto.ImageName = imageUploadResponse.Data;
             Product result = await productGenericService.AddAsync(productCreateDto);
-        await productGenericService.Commit();
-        Response<ProductDto> response = Response<ProductDto>.Success(mapper.Map<ProductDto>(result), StatusCodes.Status201Created);
-        logger.LogInformation($"api/product/addproduct calling enpoint");
+            await productGenericService.Commit();
+            Response<ProductDto> response = Response<ProductDto>.Success(mapper.Map<ProductDto>(result), StatusCodes.Status201Created);
+            logger.LogInformation($"api/product/addproduct calling enpoint");
             logger.LogInformation($" adding product name='${productCreateDto.Name}'");
             return CreateResponseInstance(response);
-    }
-    ///<summary>
-    ///Ürün güncelleme.
-    ///</summary>  
-    ///<response code="204">Başarıyla güncellendi.</response>
-    [HttpPut]
+        }
+        ///<summary>
+        ///Ürün güncelleme.
+        ///</summary>  
+        ///<response code="204">Başarıyla güncellendi.</response>
+        [HttpPut]
         public async Task<IActionResult> Put(ProductUpdateDto productUpdateDto)
         {
             await productGenericService.UpdateAsync(productUpdateDto);

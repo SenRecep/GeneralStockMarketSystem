@@ -36,10 +36,7 @@ else
                 WalletDto dto=null;
                 var walletResponse = await walletService.GetWalletAsync();
                 if (walletResponse.IsSuccessful)
-                {
-                    await localStorageService.SetItemAsync(LocalStorageInfo.Wallet, walletResponse.Data);
                     dto = walletResponse.Data;
-                }
                 Balance = dto is not null? dto.Money.ToString():"Hata";
             }
             IsLoading = false;

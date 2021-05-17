@@ -142,9 +142,9 @@ namespace GeneralStockMarket.WebAPI
             app.UseCors("CorsPolicy");
 
             app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapControllers();
-        });
+            {
+                endpoints.MapControllers();
+            });
         }
     }
 }

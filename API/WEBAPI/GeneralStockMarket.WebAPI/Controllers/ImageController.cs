@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using GeneralStockMarket.ApiShared.ControllerBases;
+using GeneralStockMarket.CoreLib.ExtensionMethods;
 using GeneralStockMarket.CoreLib.Response;
 using GeneralStockMarket.CoreLib.StringInfo;
 
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace GeneralStockMarket.WebAPI.Controllers
 {
@@ -20,10 +22,12 @@ namespace GeneralStockMarket.WebAPI.Controllers
     public class ImageController : CustomControllerBase
     {
         private readonly IWebHostEnvironment webHostEnvironment;
+        private readonly ILogger<ImageController> logger;
 
-        public ImageController(IWebHostEnvironment webHostEnvironment)
+        public ImageController(IWebHostEnvironment webHostEnvironment, ILogger<ImageController> logger)
         {
             this.webHostEnvironment = webHostEnvironment;
+            this.logger = logger;
         }
 
         ///<summary>
@@ -32,7 +36,7 @@ namespace GeneralStockMarket.WebAPI.Controllers
         ///<response code="201">Başarıyla yüklendi.</response>
         ///<response code="400">Dosya bulunamadı ya da desteklenmiyor.</response>
         ///<response code="500">Ürün resmi yüklenirken hata ile karşılaşıldı</response>
-        [HttpPost]  
+        [HttpPost]
         public async Task<IActionResult> Save(IFormFile formFile, CancellationToken cancellationToken)
         {
             if (formFile.Length <= 0)
@@ -47,12 +51,17 @@ namespace GeneralStockMarket.WebAPI.Controllers
             string extension = Path.GetExtension(formFile.FileName);
 
             if (!ImageInfo.SupportedImageExtensions.Contains(extension, StringComparison.InvariantCultureIgnoreCase))
-                return CreateResponseInstance(Response<NoContent>.Fail(
+            {
+                var response = Response<NoContent>.Fail(
                             statusCode: StatusCodes.Status400BadRequest,
                             isShow: true,
                             path: "api/image/save",
                             errors: "desteklenmeyen dosya türü"
-                        ));
+                        );
+                logger.LogResponse(response);
+                return CreateResponseInstance(response);
+            }
+
 
             string uniqFileName = $"{Guid.NewGuid()}{Path.GetExtension(formFile.FileName)}";
             string folderPath = Path.Combine(webHostEnvironment.WebRootPath, ImageInfo.ProductImages);
@@ -64,7 +73,9 @@ namespace GeneralStockMarket.WebAPI.Controllers
             {
                 using FileStream fileStream = new(path, FileMode.Create);
                 await formFile.CopyToAsync(fileStream, cancellationToken);
-                return CreateResponseInstance(Response<string>.Success(uniqFileName, StatusCodes.Status201Created));
+                var response = Response<string>.Success(uniqFileName, StatusCodes.Status201Created);
+                logger.LogResponse(response,"Fotoğraf yüklendi");
+                return CreateResponseInstance(response);
             }
             catch (Exception ex)
             {
