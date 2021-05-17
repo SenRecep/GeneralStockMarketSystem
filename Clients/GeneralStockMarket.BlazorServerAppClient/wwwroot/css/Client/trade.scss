@@ -4,7 +4,7 @@
     .section-one{
         background-color: var(--color6);
         padding: 1rem;
-        margin: 2rem;
+        margin: 1.25rem;
         display: flex;
         justify-content: center;
         flex-direction: column;
@@ -31,13 +31,12 @@
         }
 
         ul {
-            max-height: 15vh;
+            height: 20vh;
             overflow-y: auto;
             overflow-x: hidden;
-            margin: 2rem;
-    
+            margin:15px 20px;
             li {
-                margin-bottom: 10px;
+                margin-bottom: 5px;
     
                 &:last-child {
                     margin-bottom: 0;

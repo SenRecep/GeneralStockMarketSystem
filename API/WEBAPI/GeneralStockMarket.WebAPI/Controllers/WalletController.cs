@@ -31,6 +31,10 @@ namespace GeneralStockMarket.WebAPI.Controllers
             this.walletService = walletService;
             this.sharedIdentityService = sharedIdentityService;
         }
+        ///<summary>
+        ///Kullanıcının cüzdanının getirilmesi.
+        ///</summary>  
+        ///<response code="200">Başarıyla getirildi.</response>
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -39,6 +43,11 @@ namespace GeneralStockMarket.WebAPI.Controllers
             return CreateResponseInstance(Response<WalletDto>.Success(wallet, StatusCodes.Status200OK));
         }
 
+        ///<summary>
+        ///Kullanıcının cüzdanının oluşturulması ve getirilmesi.
+        ///</summary>  
+        ///<response code="201">Başarıyla oluşturuldu/getirildi.</response>
+        ///<response code="500">Cüzdan oluşturulurken bir hata ile karşılaşıldı</response>
         [HttpGet("CreateWallet")]
         public async Task<IActionResult> CreateWallet()
         {
