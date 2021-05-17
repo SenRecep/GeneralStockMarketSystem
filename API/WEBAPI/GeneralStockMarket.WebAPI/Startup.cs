@@ -34,6 +34,16 @@ namespace GeneralStockMarket.WebAPI
         {
             services.AddDependencies(Configuration, Environment);
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy", builder =>
+                {
+                    builder.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
+                });
+            });
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, opt =>
                 {
@@ -120,6 +130,8 @@ namespace GeneralStockMarket.WebAPI
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseCors("CorsPolicy");
 
             app.UseEndpoints(endpoints =>
             {

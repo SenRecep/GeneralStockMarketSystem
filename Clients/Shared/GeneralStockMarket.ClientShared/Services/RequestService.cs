@@ -36,6 +36,11 @@ namespace GeneralStockMarket.ClientShared.Services
             return await httpClient.GetFromJsonAsync<Response<RequestDto>>("api/request/getall");
         }
 
+        public async Task<Response<NewTypeRequestDto>> GetNewTypeRequestAsync(Guid id)
+        {
+            return await httpClient.GetFromJsonAsync<Response<NewTypeRequestDto>>($"api/request/getnewtyperequest/{id}");
+        }
+
         public async Task<Response<RequestDto>> GetRequestsAsync()
         {
             return await httpClient.GetFromJsonAsync<Response<RequestDto>>("api/request");

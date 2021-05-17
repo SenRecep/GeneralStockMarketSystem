@@ -2,38 +2,76 @@
 @page "/admin/productcreate"
 @page "/admin/productupdate/{ProductId:guid}"
 @attribute [Authorize(Roles = RoleInfo.DeveloperOrAdmin)]
-
+@inject IRequestService requestService
+@inject IProductService productService
+@inject IFileReaderService fileRenderService
+@inject NavigationManager  NavigationManager
 
 
 <link href="/css/Client/dist/requestedit.css" rel="stylesheet" />
 
 <div class="page requestedit-page">
-    <PageHeader Title="Ürün Oluşturma" Url="admin/request" />
+    <PageHeader Title="@Title" Url="admin/request" />
 
-    @if (PageType == PageType.Request)
+    @if (PageType == PageType.Request && NewTypeRequestDto.IsNotNull())
     {
         <div class="section-zero">
-            <pre class="mb-0">Eklenmek istenen ürün:Patlıcan<br />Burada açıklamamız var.</pre>
+            <pre class="mb-0">Eklenmek istenen ürün:@NewTypeRequestDto.Name<br />@NewTypeRequestDto.Description</pre>
         </div>
     }
 
+    @if (IsLoading)
+    {
+        <Loading />
+    }
+    else if(PageType!= PageType.Update)
+    {
 
-    <div class="section-one">
-        <form>
-            <div class="form-group">
-                <input type="text" class="mb-2 form-control" placeholder="Ürün tipi ismi" />
-                <div class="custom-file mb-2">
-                    <input type="file" class="custom-file-input" id="validatedCustomFile" required>
-                    <label class="custom-file-label" for="validatedCustomFile">Ürün görseli seçiniz...</label>
-                    <div class="invalid-feedback">Geçersiz dosya</div>
+        <div class="section-one">
+            <EditForm Model="ProductCreateDto" OnValidSubmit="ValidateSubmit">
+                <FluentValidationValidator></FluentValidationValidator>
+                @if (!ErrorMessage.IsEmpty())
+                {
+                    <div class="text-danger mb-2">
+                        @ErrorMessage
+                    </div>
+                }
+                <div class="form-group">
+                    <div class="form-group">
+                        <label for="Name">Ad</label>
+                        <InputText @bind-Value="ProductCreateDto.Name" type="text" class="mb-2 form-control" placeholder="Ürün tipi ismi" id="Name" />
+                        <ValidationMessage For="() => ProductCreateDto.Name"></ValidationMessage>
+                    </div>
+
+                    <div class="custom-file mb-2">
+                        <input @ref="FileUploadInput" @onchange="OpenFileAsync" type="file" class="custom-file-input" id="Image" required />
+                        <label class="custom-file-label" for="Image">@ProductCreateDto.FileName</label>
+                    </div>
+
+                    @if (!imgUrl.IsEmpty())
+                    {
+                        <div class="form-group text-center mb-2">
+                            <img class="img-fluid img-thumbnail" style="height:100px" src="@imgUrl">
+                        </div>
+                    }
+
+                    <input class="form-control" type="submit" />
                 </div>
-                <input class="form-control" type="submit" />
-            </div>
-        </form>
-    </div>
+            </EditForm>
+        </div>
+    }
+            else
+            {
+                <h1>SAYFA HAZIRLANIYOR</h1>
+            }
 </div>
 
 @code{
+
+    public bool IsLoading { get; set; }
+    public string Title { get; set; }
+    public string ErrorMessage { get; set; } = string.Empty;
+
 
     [Parameter]
     public Guid RequestId { get; set; }
@@ -43,10 +81,75 @@
 
     public PageType PageType { get; set; }
 
+    public ProductCreateClientDto ProductCreateDto { get; set; } = new ProductCreateClientDto()
+    {
+        FileName = "Ürün görseli seçiniz..."
+    };
+
+    public NewTypeRequestDto NewTypeRequestDto { get; set; }
+
+    public ElementReference FileUploadInput { get; set; }
+
+    string imgUrl = string.Empty;
+
+    public async Task OpenFileAsync()
+    {
+        var file = (await fileRenderService.CreateReference(FileUploadInput).EnumerateFilesAsync()).FirstOrDefault();
+        if (file == null)
+            return;
+        var fileInfo = await file.ReadFileInfoAsync();
+        ProductCreateDto.FileName = fileInfo.Name;
+
+        var ms = await file.CreateMemoryStreamAsync((int)fileInfo.Size);
+        ProductCreateDto.Image = ms;
+        var msCpy = await file.CreateMemoryStreamAsync((int)fileInfo.Size);
+
+        var buffers = new byte[fileInfo.Size];
+        await msCpy.ReadAsync(buffers);
+        string imageType = fileInfo.Type;
+        imgUrl = $"data:{imageType};base64,{Convert.ToBase64String(buffers)}";
+
+    }
+
+    protected async Task ValidateSubmit()
+    {
+        IsLoading = true;
+        var response = await productService.PostProductsAsync(ProductCreateDto);
+        if (response.IsSuccessful)
+        {
+            @if (PageType==PageType.Request)
+                await requestService.VerifyUpdateRequestAsync(true, RequestType.NewType, RequestId);
+            NavigationManager.NavigateTo("/admin/request");
+        }
+     
+        ErrorMessage = GeneralStockMarket.CoreLib.Response.Error.GetError(response.ErrorData);
+        IsLoading = false;
+        StateHasChanged();
+    }
+
     protected override async Task OnInitializedAsync()
     {
+        IsLoading = true;
         Guid emptyGuid = new Guid();
-        PageType = RequestId == emptyGuid ? (ProductId==emptyGuid? PageType.Create:PageType.Update) : PageType.Request; 
+        PageType = RequestId == emptyGuid ? (ProductId == emptyGuid ? PageType.Create : PageType.Update) : PageType.Request;
+        Title = PageType switch
+        {
+            PageType.Create => "Ürün Oluşturma",
+            PageType.Request => "Ürün İsteği",
+            PageType.Update => "Ürün Güncelleme",
+            _ => throw new Exception()
+        };
+
+        if (PageType == PageType.Request)
+        {
+            var newTypeRequestResponse = await requestService.GetNewTypeRequestAsync(RequestId);
+            if (newTypeRequestResponse.IsSuccessful)
+                NewTypeRequestDto = newTypeRequestResponse.Data;
+            else
+                NavigationManager.NavigateTo("/admin/request");
+        }
+        IsLoading = false;
+        StateHasChanged();
     }
 
 }

@@ -13,5 +13,6 @@ namespace GeneralStockMarket.DTO.Product
         public string ImageName { get; set; }
         public IFormFile Image { get; set; }
         public Guid CreatedUserId { get; set; }
+
     }
 }

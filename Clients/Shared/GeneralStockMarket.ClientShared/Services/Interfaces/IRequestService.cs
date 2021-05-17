@@ -11,6 +11,7 @@ namespace GeneralStockMarket.ClientShared.Services.Interfaces
     {
         public Task<Response<RequestDto>> GetRequestsAsync();
         public Task<Response<RequestDto>> GetAllRequestsAsync();
+        public Task<Response<NewTypeRequestDto>> GetNewTypeRequestAsync(Guid id);
         public Task<Response<NoContent>> PostRequestAsync(GenaralCreateDto dto);
         public Task<Response<NoContent>> DeleteRequestAsync(RequestType type,Guid id);
         public Task<Response<NoContent>> VerifyUpdateRequestAsync(bool mode,RequestType type,Guid id);

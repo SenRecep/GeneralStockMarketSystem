@@ -1,7 +1,7 @@
 
-using System.Text.Json;
-
 using Blazored.LocalStorage;
+
+using FluentValidation;
 
 using GeneralStockMarket.ClientShared.Containers.MicrosoftIOC;
 
@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+
+using Tewr.Blazor.FileReader;
 
 namespace GeneralStockMarket.BlazorServerAppClient
 {
@@ -29,15 +31,13 @@ namespace GeneralStockMarket.BlazorServerAppClient
         {
             services.AddDependencies(configuration, environment);
 
+
             services.AddBlazoredLocalStorage(config =>
             {
-                //config.JsonSerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
-                //config.JsonSerializerOptions.IgnoreNullValues = true;
-                //config.JsonSerializerOptions.IgnoreReadOnlyProperties = true;
-                //config.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
-                //config.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-                //config.JsonSerializerOptions.ReadCommentHandling = JsonCommentHandling.Skip;
                 config.JsonSerializerOptions.WriteIndented = false;
+            });
+
+            services.AddFileReaderService(opt=> {
             });
 
             services.AddControllersWithViews().AddValidationDependencies();

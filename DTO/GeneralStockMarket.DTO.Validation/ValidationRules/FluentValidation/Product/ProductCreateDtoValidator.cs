@@ -11,8 +11,6 @@ namespace GeneralStockMarket.DTO.Validation.ValidationRules.FluentValidation.Pro
         {
             RuleFor(x => x.Name).NotEmpty().WithMessage("Name is required");
             RuleFor(x => x.Image).NotEmpty().WithMessage("Image is required");
-            RuleFor(x => x.CreatedUserId).NotEmpty().WithMessage("UserID is required");
-
         }
     }
 }

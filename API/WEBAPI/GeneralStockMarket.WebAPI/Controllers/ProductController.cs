@@ -6,6 +6,7 @@ using AutoMapper;
 
 using GeneralStockMarket.ApiShared.ControllerBases;
 using GeneralStockMarket.ApiShared.Filters;
+using GeneralStockMarket.ApiShared.Services.Interfaces;
 using GeneralStockMarket.Bll.Interfaces;
 using GeneralStockMarket.CoreLib.ExtensionMethods;
 using GeneralStockMarket.CoreLib.Response;
@@ -28,6 +29,7 @@ namespace GeneralStockMarket.WebAPI.Controllers
         private readonly IProductService productService;
         private readonly IImageService imageService;
         private readonly IMapper mapper;
+        private readonly ISharedIdentityService sharedIdentityService;
         private readonly ILogger<ProductController> logger;
 
         public ProductController(
@@ -35,12 +37,14 @@ namespace GeneralStockMarket.WebAPI.Controllers
             IProductService productService,
             IImageService imageService,
             IMapper mapper,
+            ISharedIdentityService sharedIdentityService,
             ILogger<ProductController> logger)
         {
             this.productGenericService = productGenericService;
             this.productService = productService;
             this.imageService = imageService;
             this.mapper = mapper;
+            this.sharedIdentityService = sharedIdentityService;
             this.logger = logger;
         }
         [HttpGet]
@@ -74,8 +78,15 @@ namespace GeneralStockMarket.WebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromForm]ProductCreateDto productCreateDto)
+        public async Task<IActionResult> Post([FromForm]IFormFile Image, [FromForm] string Name)
         {
+            Guid userId = Guid.Parse(sharedIdentityService.GetUserId);
+            ProductCreateDto productCreateDto = new()
+            {
+                Image=Image,
+                Name= Name
+            };
+            productCreateDto.CreatedUserId = userId;
             var imageUploadResponse = await imageService.UploadImageAsync(productCreateDto.Image);
             if (!imageUploadResponse.IsSuccessful)
                 return CreateResponseInstance(imageUploadResponse);

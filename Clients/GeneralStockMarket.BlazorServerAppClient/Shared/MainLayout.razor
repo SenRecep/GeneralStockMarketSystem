@@ -3,7 +3,7 @@
 @implements IDisposable
 <link href="/css/Client/dist/main.css" rel="stylesheet" />
 
-<LoginUserComponentBase/>
+<LoginUserComponentBase />
 
 <main>
     <div class="main-container row mx-0">
@@ -11,25 +11,34 @@
         @if (IsLeftSideShow)
         {
 
-                <div class="left-side offset-lg-2 col-lg-4 offset-md-1 col-md-5  col-sm-6 px-0 side">
-                    <div class="header d-flex flex-column justify-content-center align-items-center px-4">
-                        <h3 class="font-weight-bold">Cüzdanım</h3>
-                        <img class="img-fluid" src="/img/wallet.svg" alt="wallet" />
-                        <NetBalance/>
-                    </div>
-                    <div class="body">
-                        <ul>
-                            <li><a href="/orders">Emirler</a></li>
-                            <li><a href="/requests">İstekler</a></li>
-                            <li><a href="/account">Hesap</a></li>
-                            <li><a href="/logout">Güvenli Çıkış</a></li>
-                        </ul>
-                    </div>
+            <div class="left-side offset-lg-2 col-lg-4 offset-md-1 col-md-5  col-sm-6 px-0 side">
+                <div class="header d-flex flex-column justify-content-center align-items-center px-4">
+                    <h3 class="font-weight-bold">Cüzdanım</h3>
+                    <img class="img-fluid" src="/img/wallet.svg" alt="wallet" />
+                    <NetBalance />
+                </div>
+                <div class="body">
+                    <ul>
+                        <li><a href="/orders">Emirler</a></li>
+                        @if (IsBoss)
+                        {
+                            <li><a href="/admin/request">İstekler</a></li>
+                            <li><a href="/admin/productcreate">Ürün Oluştur</a></li>
 
+                        }
+                        else
+                        {
+                            <li><a href="/requests">İstekler</a></li>
+                        }
+                        <li><a href="/account">Hesap</a></li>
+                        <li><a href="/logout">Güvenli Çıkış</a></li>
+                    </ul>
                 </div>
-                <div class="right-side  col-lg-4 col-md-5 col-sm-6 px-0  side ">
-                    @Body
-                </div>
+
+            </div>
+            <div class="right-side  col-lg-4 col-md-5 col-sm-6 px-0  side ">
+                @Body
+            </div>
         }
         else
         {
@@ -46,7 +55,13 @@
 
 @code{
 
+
+    [CascadingParameter]
+    private Task<AuthenticationState> AuthenticationStateTask { get; set; }
+
     public bool IsLeftSideShow { get; set; }
+
+    public bool IsBoss { get; set; }
 
     private void SideState()
     {
@@ -55,8 +70,12 @@
     }
 
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
+        var authenticationState = await AuthenticationStateTask;
+        IsBoss = authenticationState.User.Claims.Where(x =>
+     x.Type == "role" &&
+    (x.Value == RoleInfo.Admin || x.Value == RoleInfo.Developer)).Any();
         SideState();
         navigationManager.LocationChanged += HandleLocactionChanged;
     }

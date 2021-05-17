@@ -38,9 +38,15 @@
         <div class="section-two">
             <EditForm Model="LoginUser" OnValidSubmit="ValidSubmit">
                 <FluentValidationValidator></FluentValidationValidator>
+                @if (!ErrorMessage.IsEmpty())
+                {
+                    <div class="text-danger mb-2">
+                        @ErrorMessage
+                    </div>
+                }
                 <div class="form-row">
                     <div class="form-group col-md-6">
-                        <label for="FirstName" >Ad</label>
+                        <label for="FirstName">Ad</label>
                         <InputText @bind-Value="LoginUser.FirstName" type="text" class="form-control" placeholder="Ad" id="FirstName" @bind-disabled="DisableAttribute" />
                         <ValidationMessage For="() => LoginUser.FirstName"></ValidationMessage>
                     </div>
@@ -54,7 +60,7 @@
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="IdentityNumber">TC Kimlik Numarsı</label>
-                        <InputText @bind-Value="LoginUser.IdentityNumber" type="text" class="form-control" placeholder="TC Kimlik Numarsı" id="IdentityNumber" @bind-disabled="DisableAttribute"/>
+                        <InputText @bind-Value="LoginUser.IdentityNumber" type="text" class="form-control" placeholder="TC Kimlik Numarsı" id="IdentityNumber" @bind-disabled="DisableAttribute" />
                         <ValidationMessage For="() => LoginUser.IdentityNumber"></ValidationMessage>
                     </div>
                     <div class="form-group col-md-6">
@@ -99,6 +105,8 @@
 
     public string DisableAttribute { get; set; }
 
+    public string ErrorMessage { get; set; } = string.Empty;
+
 
     protected async Task InitAsync()
     {
@@ -107,7 +115,7 @@
         LoginUser = await localStorageService.GetItemAsync<UserDto>(LocalStorageInfo.LoginUser);
         IsLoading = false;
 
-        DisableAttribute = IsVerified? "disabled":null;
+        DisableAttribute = IsVerified ? "disabled" : null;
         StateHasChanged();
     }
 
@@ -135,8 +143,14 @@
             }
 
             await walletService.CreateWalletAsync();
-
             navigationManager.NavigateTo("/auth/refreshtoken", true);
         }
+        else
+        {
+            ErrorMessage = GeneralStockMarket.CoreLib.Response.Error.GetError(response.ErrorData);
+            IsLoading = false;
+            StateHasChanged();
+        }
+
     }
 }

@@ -12,6 +12,7 @@
     <PackageReference Include="Blazored.FluentValidation" Version="2.0.0" />
     <PackageReference Include="Blazored.LocalStorage" Version="4.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="5.0.4" />
+    <PackageReference Include="Tewr.Blazor.FileReader" Version="3.0.0.20340" />
   </ItemGroup>
   
   <ItemGroup>

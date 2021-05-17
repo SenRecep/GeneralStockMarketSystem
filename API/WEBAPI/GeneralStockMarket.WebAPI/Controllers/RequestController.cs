@@ -9,6 +9,7 @@ using GeneralStockMarket.ApiShared.Services.Interfaces;
 using GeneralStockMarket.Bll.Interfaces;
 using GeneralStockMarket.Bll.StringInfos;
 using GeneralStockMarket.Core.Entities.Abstract;
+using GeneralStockMarket.CoreLib.ExtensionMethods;
 using GeneralStockMarket.CoreLib.Interfaces;
 using GeneralStockMarket.CoreLib.Response;
 using GeneralStockMarket.CoreLib.StringInfo;
@@ -62,7 +63,7 @@ namespace GeneralStockMarket.WebAPI.Controllers
         }
 
         [HttpGet("GetAll")]
-        [Authorize(Roles =RoleInfo.DeveloperOrAdmin)]
+        [Authorize(Roles = RoleInfo.DeveloperOrAdmin)]
         public async Task<IActionResult> GetAll()
         {
             RequestDto model = await requestService.GetAllRequestsAsync();
@@ -120,14 +121,14 @@ namespace GeneralStockMarket.WebAPI.Controllers
 
         }
 
-        [HttpDelete("{type}/{id}")]
+        [HttpDelete("{type}/{id:guid}")]
         public async Task<IActionResult> Delete(RequestType type, Guid id)
         {
             Guid userId = Guid.Parse(sharedIdentityService.GetUserId);
             Response<NoContent> response = null;
             try
             {
-                DeleteDto deleteDto = new() { Id = id ,UpdateUserId= userId };
+                DeleteDto deleteDto = new() { Id = id, UpdateUserId = userId };
                 switch (type)
                 {
                     case RequestType.Deposit:
@@ -159,7 +160,7 @@ namespace GeneralStockMarket.WebAPI.Controllers
             return CreateResponseInstance(response);
         }
 
-        [HttpDelete("VerifyUpdate/{verify}/{type}/{id}")]
+        [HttpDelete("VerifyUpdate/{verify}/{type}/{id:guid}")]
         [Authorize(Roles = RoleInfo.DeveloperOrAdmin)]
         public async Task<IActionResult> VerifyUpdate(bool verify, RequestType type, Guid id)
         {
@@ -167,7 +168,7 @@ namespace GeneralStockMarket.WebAPI.Controllers
             Response<NoContent> response = null;
             try
             {
-                VerifyDto verifyDto = new() { Id = id, UpdateUserId = userId,Verify= verify };
+                VerifyDto verifyDto = new() { Id = id, UpdateUserId = userId, Verify = verify };
                 switch (type)
                 {
                     case RequestType.Deposit:
@@ -201,5 +202,21 @@ namespace GeneralStockMarket.WebAPI.Controllers
             }
             return CreateResponseInstance(response);
         }
+
+        [HttpGet("GetNewTypeRequest/{id:guid}")]
+        [Authorize(Roles = RoleInfo.DeveloperOrAdmin)]
+        public async Task<IActionResult> GetNewTypeRequest(Guid id)
+        {
+            var dto = await genericNewTypeRequestService.GetByIdAsync<NewTypeRequestDto>(id);
+            if (dto.IsNull())
+                return CreateResponseInstance(Response<NewTypeRequestDto>.Fail(
+                    statusCode: StatusCodes.Status404NotFound,
+                    isShow: true,
+                    path: "api/request/GetNewTypeRequest/{id}",
+                    errors: "İstenilen veri bulunamadı"
+                    ));
+            return CreateResponseInstance(Response<NewTypeRequestDto>.Success(dto, StatusCodes.Status200OK));
+        }
+
     }
 }
