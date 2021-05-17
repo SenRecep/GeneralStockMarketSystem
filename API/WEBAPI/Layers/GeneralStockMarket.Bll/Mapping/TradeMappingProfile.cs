@@ -16,6 +16,7 @@ namespace GeneralStockMarket.Bll.Mapping
         public TradeMappingProfile()
         {
             CreateMap<TradeCreateDto,SellModel>();
+            CreateMap<TradeCreateDto,BuyModel>();
         }
     }
 }

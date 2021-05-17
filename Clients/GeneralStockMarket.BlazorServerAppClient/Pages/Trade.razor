@@ -3,12 +3,13 @@
 @inject IProductService productService
 @inject IWalletService walletService
 @inject PhotoHelper photoHelper
+@inject ITradeService tradeService
 
 <link href="/css/Client/dist/trade.css" rel="stylesheet" />
 
 <div class="page trade-page">
     <PageHeader Title="Alım/Satım" />
-    @if (ProductTradeDto.IsNull() || WalletDto.IsNull())
+    @if (IsLoading)
     {
         <Loading />
     }
@@ -102,6 +103,8 @@
     [Parameter]
     public Guid Id { get; set; }
 
+    public bool IsLoading { get; set; }
+
     public string ErrorMessage { get; set; } = string.Empty;
 
     public TradeCreateDto TradeCreateDto { get; set; } = new TradeCreateDto();
@@ -119,16 +122,30 @@
 
     public async Task ValidSubmit()
     {
-        if (TradeCreateDto.Amount>ProductTradeDto.Amount)
+        IsLoading = true;
+        StateHasChanged();
+        if (TradeCreateDto.TradeType == TradeType.Buy && TradeCreateDto.Amount > ProductTradeDto.Amount)
         {
             ErrorMessage = "Piyasada bu miktarda ürün bulunmamaktadır";
             return;
         }
+
+        var response = await tradeService.TradeAsync(TradeCreateDto);
+        if (response.IsSuccessful)
+            await InitAsync();
+        else
+        {
+            ErrorMessage = GeneralStockMarket.CoreLib.Response.Error.GetError(response.ErrorData);
+            IsLoading = false;
+            StateHasChanged();
+        }
+
     }
 
-    protected override async Task OnInitializedAsync()
+    public async Task InitAsync()
     {
-        await base.OnInitializedAsync();
+        IsLoading = true;
+        StateHasChanged();
         var productResponse = productService.GetProductByIdAsync(Id);
 
         var walletResponse = walletService.GetWalletAsync();
@@ -143,6 +160,14 @@
             WalletDto = walletResponse.Result.Data;
             UserProductItemDto = WalletDto.ProductItems.FirstOrDefault(x => x.ProductId == Id);
         }
+        TradeCreateDto.ProductId = Id;
+        IsLoading = false;
+        StateHasChanged();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await InitAsync();
     }
 
 }

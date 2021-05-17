@@ -64,7 +64,12 @@ namespace GeneralStockMarket.WebAPI.Controllers
             else
             {
                 var buyDto=mapper.Map<BuyModel>(tradeCreateDto);
-                
+                buyDto.ProductItem = productItem;
+                buyDto.WalletId = walletDto.Id;
+                buyDto.UserId = userId;
+                buyDto.WalletDto = walletDto;
+                var response = await tradeService.BuyAsync(buyDto);
+                return CreateResponseInstance(response);
             }
         }
     }

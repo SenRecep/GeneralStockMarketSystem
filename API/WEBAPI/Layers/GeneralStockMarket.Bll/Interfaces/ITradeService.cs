@@ -9,7 +9,8 @@ namespace GeneralStockMarket.Bll.Interfaces
 {
     public interface ITradeService
     {
-        public Task<Response<NoContent>> SellAsync(SellModel sellModel);
+        public Task<Response<NoContent>> SellAsync(SellModel buyModel);
+        public Task<Response<NoContent>> BuyAsync(BuyModel sellModel);
         public (ProductItem ProductItem, MarketItem MarketItem) CreateMarketItem(SellModel sellModel);
     }
 }

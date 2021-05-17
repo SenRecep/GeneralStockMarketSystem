@@ -11,6 +11,9 @@ namespace GeneralStockMarket.Bll.Mapping
         public MarketItemMappingProfile()
         {
             CreateMap<MarketItem, MarketItemDto>();
+            CreateMap<MarketItemDto, MarketItemUpdateDto>();
+            CreateMap<MarketItemUpdateDto, MarketItem>();
+
         }
     }
 }
