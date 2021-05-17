@@ -34,10 +34,12 @@ namespace GeneralStockMarket.CoreLib.ExtensionMethods
 
         public static void LogResponse<T, R>(this ILogger<T> logger, Response<R> response, string message = "") where R : class
         {
+            if (!message.IsEmpty())
+                logger.LogInformation(message);
+
             if (response.IsSuccessful && response.Data is string res)
                 logger.LogInformation(res);
-            if (response.IsSuccessful && !message.IsEmpty())
-                logger.LogInformation(message);
+           
             if (!response.IsSuccessful)
             {
                 string errors = Error.GetError(response.ErrorData);
