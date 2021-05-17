@@ -21,6 +21,7 @@ using GeneralStockMarket.Entities.Concrete;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace GeneralStockMarket.WebAPI.Controllers
 {
@@ -35,6 +36,7 @@ namespace GeneralStockMarket.WebAPI.Controllers
         private readonly IGenericService<ProductDepositRequest> genericProductRequestService;
         private readonly IGenericService<NewTypeRequest> genericNewTypeRequestService;
         private readonly IGenericService<DepositRequest> genericDepositRequestService;
+        private readonly ILogger<RequestController> logger;
 
         public RequestController(
             IRequestService requestService,
@@ -42,7 +44,8 @@ namespace GeneralStockMarket.WebAPI.Controllers
             IMapper mapper,
             IGenericService<ProductDepositRequest> genericProductRequestService,
             IGenericService<NewTypeRequest> genericNewTypeRequestService,
-            IGenericService<DepositRequest> genericDepositRequestService)
+            IGenericService<DepositRequest> genericDepositRequestService,
+            ILogger<RequestController> logger)
         {
             this.requestService = requestService;
             this.sharedIdentityService = sharedIdentityService;
@@ -51,6 +54,7 @@ namespace GeneralStockMarket.WebAPI.Controllers
             this.genericProductRequestService = genericProductRequestService;
             this.genericNewTypeRequestService = genericNewTypeRequestService;
             this.genericDepositRequestService = genericDepositRequestService;
+            this.logger = logger;
         }
 
         ///<summary>
@@ -62,7 +66,9 @@ namespace GeneralStockMarket.WebAPI.Controllers
         {
             Guid userId = Guid.Parse(sharedIdentityService.GetUserId);
             RequestDto model = await requestService.GetRequestsAsync(userId);
-            return CreateResponseInstance(Response<RequestDto>.Success(model, StatusCodes.Status200OK));
+            var response=Response<RequestDto>.Success(model, StatusCodes.Status200OK);
+            logger.LogResponse(response,"Request başarıyla geldi.");
+            return CreateResponseInstance(response);
         }
 
         ///<summary>
@@ -74,7 +80,9 @@ namespace GeneralStockMarket.WebAPI.Controllers
         public async Task<IActionResult> GetAll()
         {
             RequestDto model = await requestService.GetAllRequestsAsync();
-            return CreateResponseInstance(Response<RequestDto>.Success(model, StatusCodes.Status200OK));
+            var response=Response<RequestDto>.Success(model, StatusCodes.Status200OK);
+            logger.LogResponse(response,"Bütün requestler başarıyla geldi.");
+            return CreateResponseInstance(response);
         }
 
         ///<summary>
@@ -119,6 +127,7 @@ namespace GeneralStockMarket.WebAPI.Controllers
                         throw new CustomException();
                 }
                 response = Response<NoContent>.Success(StatusCodes.Status201Created);
+                logger.LogResponse(response,"Request başarıyla oluşturuldu ve eklendi.");
             }
             catch
             {
@@ -128,6 +137,7 @@ namespace GeneralStockMarket.WebAPI.Controllers
                     path: "[POST] api/request",
                     errors: "Desteklenmeyen istek tipi"
                     );
+                    logger.LogResponse(response,"Desteklenmeyen istek tipi.");
             }
             return CreateResponseInstance(response);
 
@@ -163,6 +173,7 @@ namespace GeneralStockMarket.WebAPI.Controllers
                         throw new CustomException();
                 }
                 response = Response<NoContent>.Success(StatusCodes.Status204NoContent);
+                logger.LogResponse(response,"Request başarıyla silindi.");
             }
             catch
             {
@@ -172,6 +183,7 @@ namespace GeneralStockMarket.WebAPI.Controllers
                     path: "[DELETE] api/request",
                     errors: "Desteklenmeyen istek tipi"
                     );
+                    logger.LogResponse(response,"Desteklenmeye istek tipi.");
             }
             return CreateResponseInstance(response);
         }
@@ -210,6 +222,7 @@ namespace GeneralStockMarket.WebAPI.Controllers
                         throw new CustomException();
                 }
                 response = Response<NoContent>.Success(StatusCodes.Status204NoContent);
+                logger.LogResponse(response,"Request başarıyla cevaplandı.");
             }
             catch
             {
@@ -219,6 +232,7 @@ namespace GeneralStockMarket.WebAPI.Controllers
                     path: "[DELETE] api/request",
                     errors: "Desteklenmeyen istek tipi"
                     );
+                logger.LogResponse(response,"Desteklenmeyen istek tipi.");
             }
             return CreateResponseInstance(response);
         }

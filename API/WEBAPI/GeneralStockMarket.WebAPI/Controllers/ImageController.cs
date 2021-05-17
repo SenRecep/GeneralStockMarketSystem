@@ -40,12 +40,17 @@ namespace GeneralStockMarket.WebAPI.Controllers
         public async Task<IActionResult> Save(IFormFile formFile, CancellationToken cancellationToken)
         {
             if (formFile.Length <= 0)
-                return CreateResponseInstance(Response<NoContent>.Fail(
+            {
+                var response = Response<NoContent>.Fail(
                         statusCode: StatusCodes.Status400BadRequest,
                         isShow: true,
                         path: "api/image/save",
                         errors: "image not found"
-                    ));
+                    );
+                logger.LogResponse(response, "Resim bulunamadı.");
+                return CreateResponseInstance(response);
+
+            }
 
 
             string extension = Path.GetExtension(formFile.FileName);
@@ -74,17 +79,19 @@ namespace GeneralStockMarket.WebAPI.Controllers
                 using FileStream fileStream = new(path, FileMode.Create);
                 await formFile.CopyToAsync(fileStream, cancellationToken);
                 var response = Response<string>.Success(uniqFileName, StatusCodes.Status201Created);
-                logger.LogResponse(response,"Fotoğraf yüklendi");
+                logger.LogResponse(response, "Fotoğraf yüklendi");
                 return CreateResponseInstance(response);
             }
             catch (Exception ex)
             {
-                return CreateResponseInstance(Response<NoContent>.Fail(
+                var response = Response<NoContent>.Fail(
                         statusCode: StatusCodes.Status500InternalServerError,
                         isShow: true,
                         path: "api/image/save",
                         errors: new[] { "Ürün resmi yüklenirken hata ile karşılaşıldı", ex.Message }
-                    ));
+                    );
+                logger.LogResponse(response, "Ürün resmi yüklenemedi.");
+                return CreateResponseInstance(response);
             }
         }
         ///<summary>
@@ -99,26 +106,36 @@ namespace GeneralStockMarket.WebAPI.Controllers
             string path = Path.Combine(webHostEnvironment.WebRootPath, ImageInfo.ProductImages, imageName);
 
             if (!System.IO.File.Exists(path))
-                return CreateResponseInstance(Response<NoContent>.Fail(
+            {
+                var response = Response<NoContent>.Fail(
                        statusCode: StatusCodes.Status404NotFound,
                        isShow: true,
                        path: "api/image/delete",
                        errors: "Ürün resmi bulunamadı"
-                   ));
+                   );
+                logger.LogResponse(response, "Ürün resmi bulunamadı.");
+                return CreateResponseInstance(response);
+            }
+
 
             try
             {
                 System.IO.File.Delete(path);
-                return CreateResponseInstance(Response<NoContent>.Success(StatusCodes.Status204NoContent));
+                var response=Response<NoContent>.Success(StatusCodes.Status204NoContent);
+                logger.LogResponse(response,"Dosya silinmeye çalışılıyor.");
+                return CreateResponseInstance(response);
             }
             catch (Exception ex)
             {
-                return CreateResponseInstance(Response<NoContent>.Fail(
+                var response=Response<NoContent>.Fail(
                         statusCode: StatusCodes.Status500InternalServerError,
                         isShow: true,
                         path: "api/image/delete",
                         errors: new[] { "Ürün resmi silinirken bir hata ile karşılaşıldı", ex.Message }
-                    ));
+                    );
+                logger.LogResponse(response,"Ürün resmi silinemedi");
+                return CreateResponseInstance(response);
+                
             }
         }
 

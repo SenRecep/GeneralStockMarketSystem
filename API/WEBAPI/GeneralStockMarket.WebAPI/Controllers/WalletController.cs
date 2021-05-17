@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using GeneralStockMarket.ApiShared.ControllerBases;
 using GeneralStockMarket.ApiShared.Services.Interfaces;
 using GeneralStockMarket.Bll.Interfaces;
+using GeneralStockMarket.CoreLib.ExtensionMethods;
 using GeneralStockMarket.CoreLib.Response;
 using GeneralStockMarket.DTO.Wallet;
 using GeneralStockMarket.Entities.Concrete;
@@ -14,6 +15,7 @@ using GeneralStockMarket.Entities.Concrete;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace GeneralStockMarket.WebAPI.Controllers
 {
@@ -24,12 +26,19 @@ namespace GeneralStockMarket.WebAPI.Controllers
         private readonly IGenericService<Wallet> walletGenericService;
         private readonly IWalletService walletService;
         private readonly ISharedIdentityService sharedIdentityService;
+        private readonly ILogger<WalletController> logger;
 
-        public WalletController(IGenericService<Wallet> walletGenericService,IWalletService walletService, ISharedIdentityService sharedIdentityService) 
+        public WalletController(
+        IGenericService<Wallet> walletGenericService,
+        IWalletService walletService,
+         ISharedIdentityService sharedIdentityService,
+         ILogger<WalletController> logger)
         {
             this.walletGenericService = walletGenericService;
             this.walletService = walletService;
             this.sharedIdentityService = sharedIdentityService;
+            this.logger = logger;
+            this.logger = logger;
         }
         ///<summary>
         ///Kullanıcının cüzdanının getirilmesi.
@@ -40,7 +49,9 @@ namespace GeneralStockMarket.WebAPI.Controllers
         {
             var userId = Guid.Parse(sharedIdentityService.GetUserId);
             var wallet = await walletService.GetWalletByUserIdAsync(userId);
-            return CreateResponseInstance(Response<WalletDto>.Success(wallet, StatusCodes.Status200OK));
+            var response = Response<WalletDto>.Success(wallet, StatusCodes.Status200OK);
+            logger.LogResponse(response, "Cüzdan başarıyla geldi.");
+            return CreateResponseInstance(response);
         }
 
         ///<summary>
@@ -51,28 +62,36 @@ namespace GeneralStockMarket.WebAPI.Controllers
         [HttpGet("CreateWallet")]
         public async Task<IActionResult> CreateWallet()
         {
-            var userId=  Guid.Parse(sharedIdentityService.GetUserId); 
+            Response<NoContent> response = null;
+            var userId = Guid.Parse(sharedIdentityService.GetUserId);
             var isExist = await walletService.WalletIsExistByUserIdAsync(userId);
             if (!isExist)
             {
-                WalletCreateDto createWallet = new() {
+                WalletCreateDto createWallet = new()
+                {
                     CreatedUserId = userId,
-                    UserId= userId
+                    UserId = userId
                 };
 
-               var wallet= await walletGenericService.AddAsync(createWallet);
+                var wallet = await walletGenericService.AddAsync(createWallet);
                 await walletGenericService.Commit();
                 if (wallet is null)
-                    return CreateResponseInstance(Response<NoContent>.Fail(
+                {
+                    response = Response<NoContent>.Fail(
                            statusCode: StatusCodes.Status500InternalServerError,
-                            isShow:false,
-                            path:"api/wallet/cratewallet",
-                            errors:"Cüzdan oluşturulurken bir hata ile karşılaşıldı"
-                        ));
+                            isShow: false,
+                            path: "api/wallet/cratewallet",
+                            errors: "Cüzdan oluşturulurken bir hata ile karşılaşıldı"
+                        );
+                    logger.LogResponse(response, "Cüzdan oluşturulamadı.");
+                    return CreateResponseInstance(response);
+                }
+
 
             }
-
-            return CreateResponseInstance(Response<NoContent>.Success(StatusCodes.Status201Created));
+            response = Response<NoContent>.Success(StatusCodes.Status201Created);
+            logger.LogResponse(response, "Cüzdan başarıyla oluşturuldu/getirildi.");
+            return CreateResponseInstance(response);
         }
     }
 }

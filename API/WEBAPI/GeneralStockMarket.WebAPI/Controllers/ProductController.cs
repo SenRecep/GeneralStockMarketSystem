@@ -103,7 +103,11 @@ namespace GeneralStockMarket.WebAPI.Controllers
             productCreateDto.CreatedUserId = userId;
             var imageUploadResponse = await imageService.UploadImageAsync(productCreateDto.Image);
             if (!imageUploadResponse.IsSuccessful)
+            {
+                logger.LogResponse(imageUploadResponse,"Ürün resmi yükleme başarısız");
                 return CreateResponseInstance(imageUploadResponse);
+            }
+                
 
             productCreateDto.ImageName = imageUploadResponse.Data;
             Product result = await productGenericService.AddAsync(productCreateDto);
