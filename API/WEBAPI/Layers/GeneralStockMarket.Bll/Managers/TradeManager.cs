@@ -126,7 +126,7 @@ namespace GeneralStockMarket.Bll.Managers
                         CreatedUserId = Guid.Parse(UserStringInfo.SystemUserId),
                         ProductId = buyModel.ProductId,
                         UnitPrice = marketItem.UnitPrice,
-                        WalletIdBuyer = buyModel.UserId,
+                        WalletIdBuyer = buyModel.WalletId,
                         WalletIdSeller = sellerWallet.Id
                     };
                     await genericTransactionService.AddAsync(transaction);
