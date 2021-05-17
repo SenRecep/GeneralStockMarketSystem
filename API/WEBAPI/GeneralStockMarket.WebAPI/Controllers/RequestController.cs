@@ -137,7 +137,7 @@ namespace GeneralStockMarket.WebAPI.Controllers
         ///</summary>  
         ///<response code="204">Başarıyla silindi.</response>
         ///<response code="400">Desteklenmeyen istek tipi.</response>
-        HttpDelete("{type}/{id:guid}")]
+        [HttpDelete("{type}/{id:guid}")]
         public async Task<IActionResult> Delete(RequestType type, Guid id)
         {
             Guid userId = Guid.Parse(sharedIdentityService.GetUserId);
