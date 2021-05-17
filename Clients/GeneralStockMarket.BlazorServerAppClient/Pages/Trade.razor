@@ -84,16 +84,19 @@
         </div>
         <div class="section-one p-0">
             <ul>
-                <li>
-                    <a>
-                        <div class="row">
-                            <p class="col-sm-3">İşlem Adeti: 50</p>
-                            <p class="col-sm-3">Toplam Fiyat: 100₺</p>
-                            <p class="col-sm-3">Birim Fiyat: 2₺</p>
-                            <p class="col-sm-3">İşlem Tarihi: 16.10.21</p>
-                        </div>
-                    </a>
-                </li>
+                @foreach (var item in ProductTradeDto.MarketItems)
+                {
+                    <li>
+                        <a>
+                            <div class="row">
+                                <p class="col-sm-3">İşlem Adeti: @item.Amount</p>
+                                <p class="col-sm-3">Toplam Fiyat: @(item.Amount*item.UnitPrice)₺</p>
+                                <p class="col-sm-3">Birim Fiyat: @item.UnitPrice₺</p>
+                                <p class="col-sm-3">İşlem Tarihi: @item.CreateTime.ToString()</p>
+                            </div>
+                        </a>
+                    </li>
+                }
             </ul>
         </div>
     }
