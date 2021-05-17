@@ -11,6 +11,6 @@ namespace GeneralStockMarket.DTO.MerketItem
         public double UnitPrice { get; set; }
         public bool InProgress { get; set; }
         public Guid WalletId { get; set; }
-        public DateTime CreateTime { get; set; }
+        public DateTime CreatedTime { get; set; }
     }
 }
