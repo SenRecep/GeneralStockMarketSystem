@@ -51,6 +51,9 @@ namespace GeneralStockMarket.Bll.Containers.MicrosoftIOC
             services.AddScoped<IProductItemService, ProductItemManager>();
             services.AddScoped<IProductItemRepository, EfProductItemRepository>();
 
+            services.AddScoped<ITradeService, TradeManager>();
+            services.AddScoped<ITradeRepository, EfTradeRepository>();
+
             services.AddScoped<IRequestService, RequestManager>();
 
 

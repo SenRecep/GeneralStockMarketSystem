@@ -9,9 +9,14 @@ using GeneralStockMarket.ApiShared.ControllerBases;
 using GeneralStockMarket.ApiShared.Services.Interfaces;
 using GeneralStockMarket.Bll.Interfaces;
 using GeneralStockMarket.Bll.Models;
+using GeneralStockMarket.CoreLib.ExtensionMethods;
+using GeneralStockMarket.CoreLib.Response;
+using GeneralStockMarket.Dal.Interface;
 using GeneralStockMarket.DTO.Trade;
 using GeneralStockMarket.DTO.Wallet;
+using GeneralStockMarket.Entities.Concrete;
 
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GeneralStockMarket.WebAPI.Controllers
@@ -24,6 +29,7 @@ namespace GeneralStockMarket.WebAPI.Controllers
         private readonly IWalletService walletService;
         private readonly ITradeService tradeService;
         private readonly IProductItemService productItemService;
+
         private readonly IMapper mapper;
 
         public TradeController(
@@ -31,6 +37,7 @@ namespace GeneralStockMarket.WebAPI.Controllers
             IWalletService walletService,
             ITradeService tradeService,
             IProductItemService productItemService,
+
             IMapper mapper)
         {
             this.sharedIdentityService = sharedIdentityService;
@@ -48,9 +55,11 @@ namespace GeneralStockMarket.WebAPI.Controllers
             if (tradeCreateDto.TradeType == DTO.General.TradeType.Sell)
             {
                 var sellDto = mapper.Map<SellModel>(tradeCreateDto);
+                sellDto.ProductItem = productItem;
                 sellDto.WalletId = walletDto.Id;
                 sellDto.UserId = userId;
-                await tradeService.SellAync(sellDto);
+                var response = await tradeService.SellAsync(sellDto);
+                return CreateResponseInstance(response);
             }
             else
             {
