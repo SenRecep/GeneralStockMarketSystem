@@ -52,7 +52,10 @@ namespace GeneralStockMarket.WebAPI.Controllers
             this.genericDepositRequestService = genericDepositRequestService;
         }
 
-
+        ///<summary>
+        ///Kullanıcının isteklerini getirme.
+        ///</summary>  
+        ///<response code="200">Başarıyla geldi.</response>
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -61,6 +64,10 @@ namespace GeneralStockMarket.WebAPI.Controllers
             return CreateResponseInstance(Response<RequestDto>.Success(model, StatusCodes.Status200OK));
         }
 
+        ///<summary>
+        ///Tüm kullanıcıların isteklerini getirme.
+        ///</summary>  
+        ///<response code="200">Başarıyla geldi.</response>
         [HttpGet("GetAll")]
         [Authorize(Roles =RoleInfo.DeveloperOrAdmin)]
         public async Task<IActionResult> GetAll()
@@ -69,6 +76,11 @@ namespace GeneralStockMarket.WebAPI.Controllers
             return CreateResponseInstance(Response<RequestDto>.Success(model, StatusCodes.Status200OK));
         }
 
+        ///<summary>
+        ///Kullanıcının isteğinin oluşturulması.
+        ///</summary>  
+        ///<response code="201">Başarıyla oluşturuldu.</response>
+        ///<response code="400">Desteklenmeyen istek tipi.</response>
         [HttpPost]
         public async Task<IActionResult> Post(GenaralCreateDto model)
         {
@@ -120,6 +132,11 @@ namespace GeneralStockMarket.WebAPI.Controllers
 
         }
 
+        ///<summary>
+        ///Kullanıcının tip ve Id bilgisi alınan isteğinin silinmesi.
+        ///</summary>  
+        ///<response code="204">Başarıyla silindi.</response>
+        ///<response code="400">Desteklenmeyen istek tipi.</response>
         [HttpDelete("{type}/{id}")]
         public async Task<IActionResult> Delete(RequestType type, Guid id)
         {
@@ -159,6 +176,11 @@ namespace GeneralStockMarket.WebAPI.Controllers
             return CreateResponseInstance(response);
         }
 
+        ///<summary>
+        ///Adminin Id bilgisi girilen istekleri cevaplaması.
+        ///</summary>  
+        ///<response code="204">İstek onaylandı.</response>
+        ///<response code="400">İstek reddedildi.</response>
         [HttpDelete("VerifyUpdate/{verify}/{type}/{id}")]
         [Authorize(Roles = RoleInfo.DeveloperOrAdmin)]
         public async Task<IActionResult> VerifyUpdate(bool verify, RequestType type, Guid id)

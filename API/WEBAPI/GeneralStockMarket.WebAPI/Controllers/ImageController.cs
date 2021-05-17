@@ -25,7 +25,14 @@ namespace GeneralStockMarket.WebAPI.Controllers
         {
             this.webHostEnvironment = webHostEnvironment;
         }
-        [HttpPost]
+
+        ///<summary>
+        ///Görsel yüklemek için kullanılır.
+        ///</summary>  
+        ///<response code="201">Başarıyla yüklendi.</response>
+        ///<response code="400">Dosya bulunamadı ya da desteklenmiyor.</response>
+        ///<response code="500">Ürün resmi yüklenirken hata ile karşılaşıldı</response>
+        [HttpPost]  
         public async Task<IActionResult> Save(IFormFile formFile, CancellationToken cancellationToken)
         {
             if (formFile.Length <= 0)
@@ -69,6 +76,12 @@ namespace GeneralStockMarket.WebAPI.Controllers
                     ));
             }
         }
+        ///<summary>
+        ///İsmi verilen fotoğrafı silme.
+        ///</summary>  
+        ///<response code="204">Başarıyla silindi.</response>
+        ///<response code="404">Dosya bulunamadı.</response>
+        ///<response code="500">Ürün resmi silinirken hata ile karşılaşıldı</response>
         [HttpDelete("{imageName}")]
         public IActionResult Delete(string imageName)
         {

@@ -6,6 +6,7 @@ using AutoMapper;
 
 using GeneralStockMarket.ApiShared.ControllerBases;
 using GeneralStockMarket.ApiShared.Filters;
+using GeneralStockMarket.ApiShared.Services.Interfaces;
 using GeneralStockMarket.Bll.Interfaces;
 using GeneralStockMarket.CoreLib.ExtensionMethods;
 using GeneralStockMarket.CoreLib.Response;
@@ -28,6 +29,7 @@ namespace GeneralStockMarket.WebAPI.Controllers
         private readonly IProductService productService;
         private readonly IImageService imageService;
         private readonly IMapper mapper;
+        private readonly ISharedIdentityService sharedIdentityService;
         private readonly ILogger<ProductController> logger;
 
         public ProductController(
@@ -35,14 +37,20 @@ namespace GeneralStockMarket.WebAPI.Controllers
             IProductService productService,
             IImageService imageService,
             IMapper mapper,
+            ISharedIdentityService sharedIdentityService,
             ILogger<ProductController> logger)
         {
             this.productGenericService = productGenericService;
             this.productService = productService;
             this.imageService = imageService;
             this.mapper = mapper;
+            this.sharedIdentityService = sharedIdentityService;
             this.logger = logger;
         }
+        ///<summary>
+        ///Bütün ürünleri getirme.
+        ///</summary>  
+        ///<response code="200">Başarıyla gerçekleşti.</response>      
         [HttpGet]
         //[AllowAnonymous]
         public async Task<IActionResult> Get()
@@ -52,7 +60,11 @@ namespace GeneralStockMarket.WebAPI.Controllers
             logger.LogInformation("api/product/getproducts calling enpoint");
             return CreateResponseInstance(response);
         }
-
+        ///<summary>
+        ///Id bilgisi verilen ürünü getirme.
+        ///</summary>  
+        ///<response code="200">Başarıyla gerçekleşti.</response>
+        ///<response code="404">Ürün bulunamadı.</response>
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
@@ -72,24 +84,39 @@ namespace GeneralStockMarket.WebAPI.Controllers
             logger.LogInformation("api/products/getproductbyid calling enpoint");
             return CreateResponseInstance(response);
         }
-
+        ///<summary>
+        ///Ürün oluşturma.
+        ///</summary>  
+        ///<response code="201">Başarıyla eklendi.</response>
+        ///<response code="400">Dosya bulunamadı ya da desteklenmiyor.</response>
+        ///<response code="500">Ürün resmi yüklenirken hata ile karşılaşıldı</response>
         [HttpPost]
-        public async Task<IActionResult> Post([FromForm]ProductCreateDto productCreateDto)
+        public async Task<IActionResult> Post([FromForm] IFormFile Image, [FromForm] string Name)
         {
+            Guid userId = Guid.Parse(sharedIdentityService.GetUserId);
+        ProductCreateDto productCreateDto = new()
+        {
+            Image = Image,
+            Name = Name
+        };
+        productCreateDto.CreatedUserId = userId;
             var imageUploadResponse = await imageService.UploadImageAsync(productCreateDto.Image);
             if (!imageUploadResponse.IsSuccessful)
                 return CreateResponseInstance(imageUploadResponse);
 
-            productCreateDto.ImageName = imageUploadResponse.Data;
+        productCreateDto.ImageName = imageUploadResponse.Data;
             Product result = await productGenericService.AddAsync(productCreateDto);
-            await productGenericService.Commit();
-            Response<ProductDto> response = Response<ProductDto>.Success(mapper.Map<ProductDto>(result), StatusCodes.Status201Created);
-            logger.LogInformation($"api/product/addproduct calling enpoint");
+        await productGenericService.Commit();
+        Response<ProductDto> response = Response<ProductDto>.Success(mapper.Map<ProductDto>(result), StatusCodes.Status201Created);
+        logger.LogInformation($"api/product/addproduct calling enpoint");
             logger.LogInformation($" adding product name='${productCreateDto.Name}'");
             return CreateResponseInstance(response);
-        }
-
-        [HttpPut]
+    }
+    ///<summary>
+    ///Ürün güncelleme.
+    ///</summary>  
+    ///<response code="204">Başarıyla güncellendi.</response>
+    [HttpPut]
         public async Task<IActionResult> Put(ProductUpdateDto productUpdateDto)
         {
             await productGenericService.UpdateAsync(productUpdateDto);
@@ -102,6 +129,11 @@ namespace GeneralStockMarket.WebAPI.Controllers
             return CreateResponseInstance(response);
         }
 
+        ///<summary>
+        ///Id bilgisi verilen ürünü silme.
+        ///</summary>  
+        ///<response code="204">Başarıyla silindi.</response>
+        ///<response code="404">Ürün bulunamadı.</response>
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
