@@ -1,7 +1,9 @@
 using System;
+using System.Threading.Tasks;
 
 using GeneralStockMarket.CoreLib.ExtensionMethods;
 using GeneralStockMarket.Dal.Concrete.EntityFrameworkCore.Contexts;
+using GeneralStockMarket.WebAPI.Seeding;
 
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +18,7 @@ namespace GeneralStockMarket.WebAPI
 {
     public class Program
     {
-        public static int Main(string[] args)
+        public static async Task<int> Main(string[] args)
         {
             try
             {
@@ -26,12 +28,14 @@ namespace GeneralStockMarket.WebAPI
 
                 IServiceProvider services = serviceScope.ServiceProvider;
 
-                GeneralStockMarketDbContext configurationDbContext = services.GetRequiredService<GeneralStockMarketDbContext>();
+                GeneralStockMarketDbContext dbContext = services.GetRequiredService<GeneralStockMarketDbContext>();
 
-                configurationDbContext.Database.Migrate();
+                dbContext.Database.Migrate();
+
+                await Seeder.CreateAccountingWallet(services);
 
                 Log.Information("Starting host...");
-                host.Run();
+                await host.RunAsync();
                 return 0;
             }
             catch (Exception ex)

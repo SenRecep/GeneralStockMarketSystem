@@ -18,12 +18,13 @@ using GeneralStockMarket.DTO.Wallet;
 using GeneralStockMarket.Entities.Concrete;
 
 using Microsoft.AspNetCore.Http;
-using Microsoft.VisualBasic;
 
 namespace GeneralStockMarket.Bll.Managers
 {
     public class TradeManager : ITradeService
     {
+        const double ComissionRate = 0.01;
+
         private readonly ITradeRepository tradeRepository;
         private readonly IGenericRepository<ProductItem> genericProductItemRepository;
         private readonly IProductService productService;
@@ -56,7 +57,7 @@ namespace GeneralStockMarket.Bll.Managers
         public async Task<Response<NoContent>> BuyAsync(BuyModel buyModel)
         {
             Response<NoContent> response = null;
-            var productTradeDto = await productService.GetProductByIdAsync(buyModel.ProductId);
+            DTO.Product.ProductTradeDto productTradeDto = await productService.GetProductByIdAsync(buyModel.ProductId);
             if (productTradeDto.Amount < buyModel.Amount)
             {
                 response = Response<NoContent>.Fail(
@@ -68,86 +69,98 @@ namespace GeneralStockMarket.Bll.Managers
                 return response;
             }
 
-            var marketItems = productTradeDto.MarketItems.Where(x => x.WalletId != buyModel.WalletId).OrderBy(x => x.UnitPrice).ToList();
+            List<MarketItemDto> marketItems = productTradeDto.MarketItems.Where(x => x.WalletId != buyModel.WalletId).OrderBy(x => x.UnitPrice).ToList();
 
             double count = 0;
-
-            foreach (var marketItem in marketItems)
+            if (marketItems != null && marketItems.Any())
             {
-                if (count == buyModel.Amount)
-                    break;
-                var buyToCount = buyModel.Amount - count;
-                var satinalinabilecekitemsayisi = buyModel.WalletDto.Money / marketItem.UnitPrice;
-                double satinalinacaksayisi = 0;
-                if (buyToCount <= satinalinabilecekitemsayisi)
+                foreach (MarketItemDto marketItem in marketItems)
                 {
-                    if (buyToCount >= marketItem.Amount)
-                        satinalinacaksayisi = marketItem.Amount;
-                    else if (marketItem.Amount > buyToCount)
-                        satinalinacaksayisi = buyToCount;
-                }
-                else
-                    satinalinacaksayisi = satinalinabilecekitemsayisi;
-
-                try
-                {
-                    count += satinalinacaksayisi;
-                    //Kullanicinin hesabindan satin alinacak urunun parasini dus
-                    buyModel.WalletDto.Money -= satinalinacaksayisi * marketItem.UnitPrice;
-                    await genericWalletService.UpdateAsync(new WalletUpdateDto()
+                    if (count == buyModel.Amount)
+                        break;
+                    double buyToCount = buyModel.Amount - count;
+                    double satinalinabilecekitemsayisi = buyModel.WalletDto.Money / (marketItem.UnitPrice * (1 + ComissionRate));
+                    double satinalinacaksayisi = 0;
+                    if (buyToCount <= satinalinabilecekitemsayisi)
                     {
-                        Id = buyModel.WalletDto.Id,
-                        Money = buyModel.WalletDto.Money,
-                        UpdateUserId = Guid.Parse(UserStringInfo.SystemUserId)
-                    });
-                    //satan kullaniciya parayi ver
-                    var sellerWallet = await genericWalletService.GetByIdAsync<WalletUpdateDto>(marketItem.WalletId);
-                    sellerWallet.Money += satinalinacaksayisi * marketItem.UnitPrice;
-                    sellerWallet.UpdateUserId = Guid.Parse(UserStringInfo.SystemUserId);
-                    await genericWalletService.UpdateAsync(sellerWallet);
-                    await genericWalletService.Commit();
-                    //kullanicinin hesabindaki urun adedini guncelle
-                    buyModel.ProductItem.Amount += satinalinacaksayisi;
-                    buyModel.ProductItem.UpdateUserId = Guid.Parse(UserStringInfo.SystemUserId);
-                    await genericProductItemRepository.UpdateAsync(buyModel.ProductItem);
-                    await genericProductItemRepository.Commit();
-                    //marketItem urun adedini guncelle
-                    marketItem.Amount -= satinalinacaksayisi;
-                    if (marketItem.Amount == 0)
-                        marketItem.InProgress = false;
-                    var marketItemUpdateDto = mapper.Map<MarketItemUpdateDto>(marketItem);
-                    marketItemUpdateDto.UpdateUserId = Guid.Parse(UserStringInfo.SystemUserId);
-                    await genericMarketItemService.UpdateAsync(marketItemUpdateDto);
-                    await genericMarketItemService.Commit();
-                    //islem gecmisi olustur
-                    var transaction = new TransactionCreateDto()
-                    {
-                        Amount = satinalinacaksayisi,
-                        CreatedUserId = Guid.Parse(UserStringInfo.SystemUserId),
-                        ProductId = buyModel.ProductId,
-                        UnitPrice = marketItem.UnitPrice,
-                        WalletIdBuyer = buyModel.WalletId,
-                        WalletIdSeller = sellerWallet.Id
-                    };
-                    await genericTransactionService.AddAsync(transaction);
-                    await genericTransactionService.Commit();
-                    response = Response<NoContent>.Success(StatusCodes.Status201Created);
-                }
-                catch
-                {
-                    //await genericWalletService.Commit(false);
-                    //await genericProductItemRepository.Commit(false);
-                    //await genericMarketItemService.Commit(false);
-                    //await genericTransactionService.Commit(false);
-                    response = Response<NoContent>.Fail(
-                          statusCode: StatusCodes.Status500InternalServerError,
-                          isShow: true,
-                          path: "[post] api/trade",
-                          errors: "Satin alim gerceklesirken bir hata meydana geldi"
-                          );
-                }
+                        if (buyToCount >= marketItem.Amount)
+                            satinalinacaksayisi = marketItem.Amount;
+                        else if (marketItem.Amount > buyToCount)
+                            satinalinacaksayisi = buyToCount;
+                    }
+                    else
+                        satinalinacaksayisi = satinalinabilecekitemsayisi;
 
+                    try
+                    {
+                        count += satinalinacaksayisi;
+                        //Kullanicinin hesabindan satin alinacak urunun parasini dus
+                        buyModel.WalletDto.Money -= satinalinacaksayisi * (marketItem.UnitPrice * (1 + ComissionRate));
+                        await genericWalletService.UpdateAsync(new WalletUpdateDto()
+                        {
+                            Id = buyModel.WalletDto.Id,
+                            Money = buyModel.WalletDto.Money,
+                            UpdateUserId = Guid.Parse(UserStringInfo.SystemUserId)
+                        });
+                        //satan kullaniciya parayi ver
+                        WalletUpdateDto sellerWallet = await genericWalletService.GetByIdAsync<WalletUpdateDto>(marketItem.WalletId);
+                        sellerWallet.Money += satinalinacaksayisi * marketItem.UnitPrice;
+                        sellerWallet.UpdateUserId = Guid.Parse(UserStringInfo.SystemUserId);
+                        await genericWalletService.UpdateAsync(sellerWallet);
+
+                        //Accounting UPDATE
+                        WalletUpdateDto accountingWallet = await genericWalletService.GetByIdAsync<WalletUpdateDto>(AccountingState.AccountingWalletId);
+                        accountingWallet.Money += satinalinacaksayisi * marketItem.UnitPrice * ComissionRate;
+                        accountingWallet.UpdateUserId = Guid.Parse(UserStringInfo.SystemUserId);
+                        await genericWalletService.UpdateAsync(accountingWallet);
+                        await genericWalletService.Commit();
+
+                        //kullanicinin hesabindaki urun adedini guncelle
+                        buyModel.ProductItem.Amount += satinalinacaksayisi;
+                        buyModel.ProductItem.UpdateUserId = Guid.Parse(UserStringInfo.SystemUserId);
+                        await genericProductItemRepository.UpdateAsync(buyModel.ProductItem);
+                        await genericProductItemRepository.Commit();
+                        //marketItem urun adedini guncelle
+                        marketItem.Amount -= satinalinacaksayisi;
+                        if (marketItem.Amount == 0)
+                            marketItem.InProgress = false;
+                        MarketItemUpdateDto marketItemUpdateDto = mapper.Map<MarketItemUpdateDto>(marketItem);
+                        marketItemUpdateDto.UpdateUserId = Guid.Parse(UserStringInfo.SystemUserId);
+                        await genericMarketItemService.UpdateAsync(marketItemUpdateDto);
+                        await genericMarketItemService.Commit();
+                        //islem gecmisi olustur
+                        TransactionCreateDto transaction = new()
+                        {
+                            Amount = satinalinacaksayisi,
+                            CreatedUserId = Guid.Parse(UserStringInfo.SystemUserId),
+                            ProductId = buyModel.ProductId,
+                            UnitPrice = marketItem.UnitPrice,
+                            WalletIdBuyer = buyModel.WalletId,
+                            WalletIdSeller = sellerWallet.Id
+                        };
+                        await genericTransactionService.AddAsync(transaction);
+                        await genericTransactionService.Commit();
+                        response = Response<NoContent>.Success(StatusCodes.Status201Created);
+                    }
+                    catch
+                    {
+                        await genericWalletService.Commit(false);
+                        await genericProductItemRepository.Commit(false);
+                        await genericMarketItemService.Commit(false);
+                        await genericTransactionService.Commit(false);
+                        response = Response<NoContent>.Fail(
+                              statusCode: StatusCodes.Status500InternalServerError,
+                              isShow: true,
+                              path: "[post] api/trade",
+                              errors: "Satin alim gerceklesirken bir hata meydana geldi"
+                              );
+                    }
+
+                }
             }
+
+            if (response == null)
+                response = Response<NoContent>.Success(StatusCodes.Status201Created);
             return response;
         }
 
@@ -171,10 +184,10 @@ namespace GeneralStockMarket.Bll.Managers
 
         public async Task<Response<NoContent>> SellAsync(SellModel sellModel)
         {
-            var sell = CreateMarketItem(sellModel);
+            (ProductItem ProductItem, MarketItem MarketItem) sell = CreateMarketItem(sellModel);
             if (sell.MarketItem.IsNull())
             {
-                var response = Response<NoContent>.Fail(
+                Response<NoContent> response = Response<NoContent>.Fail(
                     statusCode: StatusCodes.Status400BadRequest,
                     isShow: true,
                     path: "[Post] api/trade",
@@ -189,14 +202,14 @@ namespace GeneralStockMarket.Bll.Managers
                 sell.ProductItem.UpdateUserId = Guid.Parse(UserStringInfo.SystemUserId);
                 await genericProductItemRepository.UpdateAsync(sell.ProductItem);
                 await genericProductItemRepository.Commit();
-                var response = Response<NoContent>.Success(StatusCodes.Status201Created);
+                Response<NoContent> response = Response<NoContent>.Success(StatusCodes.Status201Created);
                 return response;
             }
             catch
             {
                 await genericMarketItemRepository.Commit(false);
                 await genericProductItemRepository.Commit(false);
-                var response = Response<NoContent>.Fail(
+                Response<NoContent> response = Response<NoContent>.Fail(
                    statusCode: StatusCodes.Status500InternalServerError,
                    isShow: true,
                    path: "[Post] api/trade",

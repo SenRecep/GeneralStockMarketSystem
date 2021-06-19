@@ -1,12 +1,26 @@
 {
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iis": {
+      "applicationUrl": "http://localhost/GeneralStockMarket.AuthAPI",
+      "sslPort": 0
+    },
+    "iisExpress": {
+      "applicationUrl": "http://localhost:59266/",
+      "sslPort": 0
+    }
+  }
+
   "profiles": {
-    "SelfHost": {
+    "GeneralStockMarket.AuthApi": {
       "commandName": "Project",
+      "dotnetRunMessages": "true",
       "launchBrowser": false,
+      "applicationUrl": "http://localhost:5201",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      },
-      "applicationUrl": "http://localhost:5201"
+      }
     }
   }
 }

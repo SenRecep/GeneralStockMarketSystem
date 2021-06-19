@@ -25,13 +25,15 @@ namespace GeneralStockMarket.AuthAPI.Seeding
                 Email = "yusuftopkaya@protonmail.com",
                 Password = "123Password*"
             };
-        }
 
+
+        }
         public static IEnumerable<IdentityRole> GetRoles()
         {
             yield return new IdentityRole(RoleInfo.Developer);
             yield return new IdentityRole(RoleInfo.Admin);
             yield return new IdentityRole(RoleInfo.Customer);
+            yield return new IdentityRole(RoleInfo.Accounting);
             yield return new IdentityRole(RoleInfo.IsVerified);
         }
     }

@@ -1,4 +1,6 @@
-﻿namespace GeneralStockMarket.Bll.StringInfos
+﻿using System;
+
+namespace GeneralStockMarket.Bll.StringInfos
 {
     public class UserStringInfo
     {

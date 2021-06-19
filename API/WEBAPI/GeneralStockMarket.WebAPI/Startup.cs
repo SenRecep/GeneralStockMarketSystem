@@ -36,6 +36,7 @@ namespace GeneralStockMarket.WebAPI
         {
             services.AddDependencies(Configuration, Environment);
 
+
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy", builder =>
@@ -54,6 +55,7 @@ namespace GeneralStockMarket.WebAPI
                     opt.RequireHttpsMetadata = !Environment.IsDevelopment();
                 });
 
+            services.AddHttpClient();
 
             services.AddHttpClient<IImageService, ImageService>(opt =>
             {

@@ -23,6 +23,7 @@ namespace GeneralStockMarket.AuthAPI.Seeding
         {
             await SeedRoles(serviceProvider);
             await SeedUsers(serviceProvider);
+            await AcountingUser(serviceProvider);
         }
 
         public static async Task SeedRoles(IServiceProvider serviceProvider)
@@ -38,6 +39,7 @@ namespace GeneralStockMarket.AuthAPI.Seeding
                 if (!result.Succeeded) throw new Exception(result.Errors.First().Description);
             }
         }
+
 
 
         public static async Task SeedUsers(IServiceProvider serviceProvider)
@@ -62,6 +64,42 @@ namespace GeneralStockMarket.AuthAPI.Seeding
 
                 if (!result.Succeeded) throw new Exception(result.Errors.First().Description);
             }
+        }
+
+        private static async Task AcountingUser(IServiceProvider serviceProvider)
+        {
+            UserManager<ApplicationUser> userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            var model = new SignUpViewModel()
+            {
+                UserName = RoleInfo.Accounting,
+                Email = "accounting@generalstockmarket.com",
+                Password = "Password12*"
+            };
+            ApplicationUser found = await userManager.FindByNameAsync(model.UserName);
+            if (found != null) return;
+
+            ApplicationUser user = new ApplicationUser()
+            {
+                UserName = model.UserName,
+                Address = "General Stock Market",
+                FirstName = "General Stock Market",
+                LastName = model.UserName,
+                Email=model.Email,
+                IdentityNumber = "1111111111"
+            };
+
+
+
+            IdentityResult result = await userManager.CreateAsync(user, model.Password);
+            if (!result.Succeeded) throw new Exception(result.Errors.First().Description);
+
+             result = await userManager.SetPhoneNumberAsync(user, "05319649002");
+            if (!result.Succeeded) throw new Exception(result.Errors.First().Description);
+
+            result = await userManager.AddToRoleAsync(user, RoleInfo.Accounting);
+            if (!result.Succeeded) throw new Exception(result.Errors.First().Description);
+            result = await userManager.AddToRoleAsync(user, RoleInfo.IsVerified);
+            if (!result.Succeeded) throw new Exception(result.Errors.First().Description);
         }
 
         public static async Task SeedConfiguration(ConfigurationDbContext context)

@@ -1,4 +1,5 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -35,8 +36,6 @@ namespace GeneralStockMarket.AuthAPI.Controllers
             this.userManager = userManager;
             this.mapper = mapper;
         }
-
-
 
         [HttpPost]
         public async Task<IActionResult> SignUp(SignUpViewModel model)
@@ -142,6 +141,25 @@ namespace GeneralStockMarket.AuthAPI.Controllers
             return CreateResponseInstance(Response<NoContent>.Success(
                 statusCode: StatusCodes.Status204NoContent
                  ));
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetAccountingUser()
+        {
+            ApplicationUser user = await userManager.FindByNameAsync(RoleInfo.Accounting);
+            if (user.IsNull()) return CreateResponseInstance(Response<Guid>.Fail(
+                 statusCode: StatusCodes.Status400BadRequest,
+                 isShow: true,
+                 path: "api/User/GetAccountinUser",
+                 errors: "Gecerli bir kullanici bulunamadi"
+                 ));
+
+
+            return CreateResponseInstance(Response<Guid>.Success(
+                 data:Guid.Parse(user.Id),
+                 statusCode: StatusCodes.Status200OK
+                  ));
         }
     }
 }

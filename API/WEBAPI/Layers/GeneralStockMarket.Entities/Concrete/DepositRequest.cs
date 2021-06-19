@@ -11,5 +11,6 @@ namespace GeneralStockMarket.Entities.Concrete
         public bool? Verify { get; set; }
         public Guid UserId { get; set; }
         public double Amount { get; set; }
+        public short MoneyType { get; set; }
     }
 }

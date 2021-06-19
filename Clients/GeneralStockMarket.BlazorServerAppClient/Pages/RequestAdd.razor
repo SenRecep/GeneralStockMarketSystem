@@ -17,20 +17,34 @@
         <div class="section-one">
             <EditForm Model="GenaralCreateDto" OnValidSubmit="ValidateSubmit">
                 <FluentValidationValidator></FluentValidationValidator>
-                @if (!ErrorMessage.IsEmpty()) { 
-            <div>
-                @ErrorMessage
-            </div>
+                @if (!ErrorMessage.IsEmpty())
+                {
+                    <div>
+                        @ErrorMessage
+                    </div>
                 }
                 <div class="form-row">
                     <label>İstek Tipi</label>
                     <select @bind="GenaralCreateDto.RequestType" class="custom-select mb-2">
                         <option value="@RequestType.NonSelect" selected>İşlem tipi seçiniz.</option>
-                        <option value="@RequestType.Deposit">TL eklemek istiyorum.</option>
+                        <option value="@RequestType.Deposit">Para eklemek istiyorum.</option>
                         <option value="@RequestType.Product">Ürün eklemek istiyorum.</option>
                         <option value="@RequestType.NewType">Yeni tip eklemek istiyorum.</option>
                     </select>
                 </div>
+
+                @if (GenaralCreateDto.RequestType == RequestType.Deposit)
+                {
+                    <div class="form-row">
+                        <label>Para Tipi</label>
+                        <select @bind="GenaralCreateDto.MoneyType" class="custom-select mb-2">
+                            <option value="@MoneyType.TRY" selected>TRY</option>
+                            <option value="@MoneyType.EUR">EUR</option>
+                            <option value="@MoneyType.GBP">GBP</option>
+                            <option value="@MoneyType.USD">USD</option>
+                        </select>
+                    </div>
+                }
 
                 @if (GenaralCreateDto.RequestType == RequestType.Product)
                 {
@@ -50,12 +64,12 @@
 
                 }
 
-                @if (GenaralCreateDto.RequestType == RequestType.Deposit || GenaralCreateDto.RequestType ==RequestType.Product)
+                @if (GenaralCreateDto.RequestType == RequestType.Deposit || GenaralCreateDto.RequestType == RequestType.Product)
                 {
                     <div class="form-row">
                         <label for="Amount">Miktar</label>
                         <InputNumber @bind-Value="GenaralCreateDto.Amount" id="Amount" placeholder="Miktar"
-                    class="form-control mb-2" type="number" />
+                                     class="form-control mb-2" type="number" />
                         <ValidationMessage For="() => GenaralCreateDto.Amount"></ValidationMessage>
                     </div>
 
@@ -67,7 +81,7 @@
                     <div class="form-row">
                         <label for="Name">Ad</label>
                         <InputText @bind-Value="GenaralCreateDto.Name" id="Name" placeholder="Ad" class="form-control mb-2"
-                    type="text" />
+                                   type="text" />
                         <ValidationMessage For="() => GenaralCreateDto.Name"></ValidationMessage>
                     </div>
 
@@ -78,7 +92,7 @@
                     <div class="form-row">
                         <label for="Description">Açıklama</label>
                         <InputTextArea @bind-Value="GenaralCreateDto.Description" id="Description" placeholder="Açıklama"
-                    class="form-control mb-2" type="text" rows="3" />
+                                       class="form-control mb-2" type="text" rows="3" />
                         <ValidationMessage For="() => GenaralCreateDto.Description"></ValidationMessage>
                     </div>
 

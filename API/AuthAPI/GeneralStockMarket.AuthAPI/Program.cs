@@ -1,8 +1,4 @@
-﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
-
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -37,7 +33,7 @@ namespace GeneralStockMarket.AuthAPI
 
                 ConfigurationDbContext configurationDbContext = services.GetRequiredService<ConfigurationDbContext>();
                 ApplicationDbContext applicationDbContext = services.GetRequiredService<ApplicationDbContext>();
-                PersistedGrantDbContext  persistedGrantDbContext = services.GetRequiredService<PersistedGrantDbContext>();
+                PersistedGrantDbContext persistedGrantDbContext = services.GetRequiredService<PersistedGrantDbContext>();
 
                 await applicationDbContext.Database.MigrateAsync();
                 await configurationDbContext.Database.MigrateAsync();
@@ -52,7 +48,7 @@ namespace GeneralStockMarket.AuthAPI
                 await Task.WhenAll(tasks);
 
                 Log.Information("Starting host...");
-                host.Run();
+                await host.RunAsync();
                 return 0;
             }
             catch (Exception ex)

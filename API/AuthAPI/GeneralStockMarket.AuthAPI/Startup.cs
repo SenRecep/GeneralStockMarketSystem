@@ -38,7 +38,7 @@ namespace GeneralStockMarket.AuthAPI
 
             services.AddLocalApiAuthentication();
 
-            services.AddControllersWithViews(opt =>
+            services.AddControllers(opt =>
             {
                 opt.Filters.Add<ValidateModelAttribute>();
             }).AddFluentValidation(opt =>
@@ -109,7 +109,7 @@ namespace GeneralStockMarket.AuthAPI
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapDefaultControllerRoute();
+                endpoints.MapControllers();
             });
         }
     }

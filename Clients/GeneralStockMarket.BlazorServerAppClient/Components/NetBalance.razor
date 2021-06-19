@@ -37,7 +37,7 @@ else
                 var walletResponse = await walletService.GetWalletAsync();
                 if (walletResponse.IsSuccessful)
                     dto = walletResponse.Data;
-                Balance = dto is not null? dto.Money.ToString():"Hata";
+                Balance = dto is not null? dto.Money.ToString("N2") :"Hata";
             }
             IsLoading = false;
             StateHasChanged();

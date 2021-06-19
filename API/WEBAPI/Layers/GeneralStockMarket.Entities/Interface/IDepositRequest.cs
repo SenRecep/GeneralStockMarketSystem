@@ -2,6 +2,6 @@
 {
     public interface IDepositRequest : IRequest
     {
-
+         short MoneyType { get; set; }
     }
 }

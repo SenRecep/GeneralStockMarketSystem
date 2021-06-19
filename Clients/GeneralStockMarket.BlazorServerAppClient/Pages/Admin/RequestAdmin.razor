@@ -16,7 +16,7 @@
             <ul>
                 @foreach (var item in RequestDto.DepositRequestDtos)
                 {
-                    <RequestRowAdmin OnClick="ClickHandler" Index="@(IdCounter++)" Id="@item.Id" Verify="@item.Verify" Type="RequestType.Deposit" Description="@item.Description" Amount="@item.Amount.ToString()" Date="@item.CreatedTime" />
+                    <RequestRowAdmin OnClick="ClickHandler" Index="@(IdCounter++)" Id="@item.Id" Verify="@item.Verify" Type="RequestType.Deposit" Description="@item.Description" Amount="@item.Amount.ToString()" MoneyType="@item.MoneyType" Date="@item.CreatedTime" />
                 }
                 @foreach (var item in RequestDto.ProductDepositRequestDtos)
                 {

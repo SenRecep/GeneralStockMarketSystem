@@ -8,7 +8,6 @@ using GeneralStockMarket.Bll.Interfaces;
 using GeneralStockMarket.Core.Entities.Abstract;
 using GeneralStockMarket.CoreLib.Interfaces;
 using GeneralStockMarket.Dal.Interface;
-using GeneralStockMarket.Entities.Interface;
 
 namespace GeneralStockMarket.Bll.Managers
 {
@@ -19,7 +18,7 @@ namespace GeneralStockMarket.Bll.Managers
         private readonly IMapper mapper;
         private readonly ICustomMapper customMapper;
 
-        public GenericManager(IGenericRepository<T> genericRepository, IMapper mapper,ICustomMapper customMapper)
+        public GenericManager(IGenericRepository<T> genericRepository, IMapper mapper, ICustomMapper customMapper)
         {
             this.genericRepository = genericRepository;
             this.mapper = mapper;
@@ -72,21 +71,19 @@ namespace GeneralStockMarket.Bll.Managers
         public async Task RemoveAsync<D>(D dto, bool hardDelete = false) where D : IDTO
         {
             T dummyEntity = mapper.Map<T>(dto);
-            var orjinal = await genericRepository.GetByIdAsync(dummyEntity.Id);
+            T orjinal = await genericRepository.GetByIdAsync(dummyEntity.Id);
             orjinal = customMapper.Map(dto, orjinal);
-            await genericRepository.RemoveAsync(orjinal,hardDelete);
+            await genericRepository.RemoveAsync(orjinal, hardDelete);
         }
 
         public async Task UpdateAsync<D>(D dto) where D : IDTO
         {
-            T  dummyEntity = mapper.Map<T>(dto);
-            var orjinal = await genericRepository.GetByIdAsync(dummyEntity.Id);
-            orjinal = customMapper.Map(dto,orjinal);
+            T dummyEntity = mapper.Map<T>(dto);
+            T orjinal = await genericRepository.GetByIdAsync(dummyEntity.Id);
+            orjinal = customMapper.Map(dto, orjinal);
             await genericRepository.UpdateAsync(orjinal);
         }
 
         public async Task<bool> Commit(bool state = true) => await genericRepository.Commit(state);
-
-       
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,6 +11,7 @@ using AutoMapper;
 using GeneralStockMarket.Bll.Interfaces;
 using GeneralStockMarket.DTO.ProductItem;
 using GeneralStockMarket.DTO.Request;
+using GeneralStockMarket.DTO.Response;
 using GeneralStockMarket.DTO.Wallet;
 using GeneralStockMarket.Entities.Concrete;
 
@@ -23,6 +26,7 @@ namespace GeneralStockMarket.Bll.Managers
         private readonly IGenericService<DepositRequest> genericDepositRequestService;
         private readonly IGenericService<ProductDepositRequest> genericProductDepositRequestService;
         private readonly IGenericService<Wallet> genericWalletService;
+        private readonly HttpClient httpClient;
         private readonly IMapper mapper;
 
         public RequestManager(
@@ -33,6 +37,7 @@ namespace GeneralStockMarket.Bll.Managers
             IGenericService<DepositRequest> genericDepositRequestService,
             IGenericService<ProductDepositRequest> genericProductDepositRequestService,
             IGenericService<Wallet> genericWalletService,
+            HttpClient httpClient,
             IMapper mapper)
         {
             this.ProductRequestService = ProductRequestService;
@@ -42,6 +47,7 @@ namespace GeneralStockMarket.Bll.Managers
             this.genericDepositRequestService = genericDepositRequestService;
             this.genericProductDepositRequestService = genericProductDepositRequestService;
             this.genericWalletService = genericWalletService;
+            this.httpClient = httpClient;
             this.mapper = mapper;
         }
         public async Task<RequestDto> GetRequestsAsync(Guid id)
@@ -76,7 +82,10 @@ namespace GeneralStockMarket.Bll.Managers
             {
                 var entityDto = await genericDepositRequestService.GetByIdAsync<DepositRequestDto>(dto.Id);
                 var walletDto = await genericWalletService.GetByUserIdAsync<WalletDto>(entityDto.CreatedUserId);
-                walletDto.Money += entityDto.Amount;
+
+                var exchangeResponse = await httpClient.GetFromJsonAsync<ExchangeResponse>("https://api.exchangerate.host/latest?base=TRY&symbols=USD,EUR,GBP,TRY");
+                var ratio = exchangeResponse.Rates.GetMoney(entityDto.MoneyType);
+                walletDto.Money += entityDto.Amount/ ratio;
                 var updateDto = mapper.Map<WalletUpdateDto>(walletDto);
                 updateDto.UpdateUserId = dto.UpdateUserId;
                 await genericWalletService.UpdateAsync(updateDto);

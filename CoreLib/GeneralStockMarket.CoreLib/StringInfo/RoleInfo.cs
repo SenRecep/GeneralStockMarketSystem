@@ -5,6 +5,7 @@
         public const string Developer = "Developer";
         public const string Admin = "Admin";
         public const string Customer = "Customer";
+        public const string Accounting = "Accounting";
         public const string IsVerified = "IsVerified";
         public const string DeveloperOrAdmin = "Developer,Admin";
     }

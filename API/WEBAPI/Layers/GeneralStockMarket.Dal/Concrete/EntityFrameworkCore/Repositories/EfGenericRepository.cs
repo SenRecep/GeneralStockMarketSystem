@@ -71,23 +71,28 @@ namespace GeneralStockMarket.Dal.Concrete.EntityFrameworkCore.Repositories
         #region Commit
         public async Task<bool> Commit(bool state = true)
         {
+            if (!state)
+            {
+                await dbContextTransaction.RollbackAsync();
+                return state;
+            }
+
             bool commitState;
             try
             {
                 await SaveChangesAsync();
                 commitState = true;
             }
-            catch (Exception ex)
+            catch
             {
                 commitState = false;
             }
 
-            if (commitState && state)
+            if (commitState)
                 await dbContextTransaction.CommitAsync();
             else
                 await dbContextTransaction.RollbackAsync();
 
-            await DisposeAsync();
             return commitState;
         }
         #endregion

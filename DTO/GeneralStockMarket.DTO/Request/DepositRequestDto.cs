@@ -1,6 +1,7 @@
 ﻿using System;
 
 using GeneralStockMarket.CoreLib.Interfaces;
+using GeneralStockMarket.DTO.Request.Enums;
 
 namespace GeneralStockMarket.DTO.Request
 {
@@ -12,5 +13,6 @@ namespace GeneralStockMarket.DTO.Request
         public double Amount { get; set; }
         public Guid CreatedUserId { get; set; }
         public DateTime CreatedTime { get; set; }
+        public MoneyType MoneyType { get; set; }
     }
 }
