@@ -1,12 +1,38 @@
-﻿<div class="page-header">
+﻿@inject HttpClient httpClient
+<div class="page-header">
     <a href="@Url"><i class="fas fa-arrow-left"></i></a>
     <h3>@Title</h3>
+    @if (isLoading)
+    {
+        <Loading />
+    }
+    else
+    {
+        <p>USD: @((1/ Rates.USD).ToString("N2"))</p>
+        <p>EUR: @((1/ Rates.EUR).ToString("N2"))</p>
+        <p>GBP: @((1/ Rates.GBP).ToString("N2"))</p>
+    }
+
 </div>
 
 
 @code{
+    bool isLoading = true;
     [Parameter]
     public string Title { get; set; }
     [Parameter]
-    public string Url{get;set;}="/";
+    public string Url { get; set; } = "/";
+
+    public Rates Rates { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var exchangeResponse = await httpClient.GetFromJsonAsync<ExchangeResponse>("https://api.exchangerate.host/latest?base=TRY&symbols=USD,EUR,GBP,TRY");
+        if (exchangeResponse.Success)
+        {
+            Rates = exchangeResponse.Rates;
+            isLoading = false;
+        }
+    }
+
 }

@@ -10,6 +10,7 @@ namespace GeneralStockMarket.Dal.Interface
     public interface IGenericRepository<T> : IUnitOfWork
         where T : class, IEntityBase, new()
     {
+        public void BeginTransaction();
         public Task<IEnumerable<T>> GetAllAsync();
         public Task<IEnumerable<T>> GetAllWithDeletedAsync();
         public Task<IEnumerable<T>> GetAllByUserIdAsync(Guid id);

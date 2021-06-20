@@ -25,6 +25,10 @@ namespace GeneralStockMarket.Dal.Concrete.EntityFrameworkCore.Mapping
                .WithOne(x => x.Product)
                .HasForeignKey(x => x.ProductId)
                .OnDelete(DeleteBehavior.Cascade);
+            builder.HasMany(x => x.LimitOptionRequests)
+               .WithOne(x => x.Product)
+               .HasForeignKey(x => x.ProductId)
+               .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

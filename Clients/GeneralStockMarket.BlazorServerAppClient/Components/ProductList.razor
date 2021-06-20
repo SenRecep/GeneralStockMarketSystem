@@ -14,7 +14,7 @@ else
                 <a href="/trade/@product.Id">
                     <div>
                         <img class="img-fluid" src="@(photoHelper.GetProductImageUrl(product.ImageName))" alt="product-image" />
-                        <p><small>x</small>@product.Amount</p>
+                        <p><small>x</small>@product.Amount.ToString("N2")</p>
                     </div>
                     <p class="px-2 text-truncate">@product.Name</p>
                     <p>@product.AvgPrice.ToString("N2")₺</p>

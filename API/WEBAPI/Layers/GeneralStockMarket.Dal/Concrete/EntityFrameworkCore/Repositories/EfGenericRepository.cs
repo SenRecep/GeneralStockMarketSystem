@@ -19,13 +19,13 @@ namespace GeneralStockMarket.Dal.Concrete.EntityFrameworkCore.Repositories
         private readonly DbContext dbContext;
         private readonly DbSet<T> table;
 
-        private readonly IDbContextTransaction dbContextTransaction;
+        private IDbContextTransaction dbContextTransaction;
 
         public EfGenericRepository(DbContext dbContext)
         {
             this.dbContext = dbContext;
             table = dbContext.Set<T>();
-            dbContextTransaction = dbContext.Database.BeginTransaction();
+            BeginTransaction();
         }
 
         #region GetAll
@@ -105,6 +105,11 @@ namespace GeneralStockMarket.Dal.Concrete.EntityFrameworkCore.Repositories
         #region Save
 
         public async Task<int> SaveChangesAsync() => await dbContext.SaveChangesAsync();
+
+        public void BeginTransaction()
+        {
+            dbContextTransaction = dbContext.Database.BeginTransaction();
+        }
 
         #endregion
 

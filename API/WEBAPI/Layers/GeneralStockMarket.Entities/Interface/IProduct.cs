@@ -12,5 +12,6 @@ namespace GeneralStockMarket.Entities.Interface
         public List<ProductItem> ProductItems { get; set; }
         public List<MarketItem> MarketItems { get; set; }
         public List<Transaction> Transactions { get; set; }
+        public List<LimitOptionRequest> LimitOptionRequests { get; set; }
     }
 }

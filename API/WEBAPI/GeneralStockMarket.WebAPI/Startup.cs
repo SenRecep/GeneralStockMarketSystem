@@ -118,8 +118,7 @@ namespace GeneralStockMarket.WebAPI
             });
 
 
-
-
+            services.AddHostedService<LimitOptionRequestScannerService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

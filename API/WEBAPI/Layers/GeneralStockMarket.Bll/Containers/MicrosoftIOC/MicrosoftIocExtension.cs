@@ -27,6 +27,7 @@ namespace GeneralStockMarket.Bll.Containers.MicrosoftIOC
             string migrationName = "GeneralStockMarket.WebAPI";
 
             services.AddTransient<DbContext, GeneralStockMarketDbContext>();
+            services.AddTransient<GeneralStockMarketDbContext>();
 
             services.AddDbContext<GeneralStockMarketDbContext>(opt =>
                 opt.UseSqlServer(connectionString, sqlOpt =>
@@ -39,25 +40,25 @@ namespace GeneralStockMarket.Bll.Containers.MicrosoftIOC
             services.AddTransient(typeof(IGenericService<>), typeof(GenericManager<>));
             services.AddTransient(typeof(IGenericRepository<>), typeof(EfGenericRepository<>));
 
-            services.AddScoped<IProductService, ProductManager>();
-            services.AddScoped<IProductRepository, EfProductRepository>();
+            services.AddTransient<IProductService, ProductManager>();
+            services.AddTransient<IProductRepository, EfProductRepository>();
 
-            services.AddScoped<IWalletService, WalletManager>();
-            services.AddScoped<IWalletRepository, EfWalletRepository>();
+            services.AddTransient<IWalletService, WalletManager>();
+            services.AddTransient<IWalletRepository, EfWalletRepository>();
 
-            services.AddScoped<IProductDepositRequestService, ProductDepositRequestManager>();
-            services.AddScoped<IProductDepositRequestRepository, EfProductDepositRequestRepository>();
+            services.AddTransient<IProductDepositRequestService, ProductDepositRequestManager>();
+            services.AddTransient<IProductDepositRequestRepository, EfProductDepositRequestRepository>();
 
-            services.AddScoped<IProductItemService, ProductItemManager>();
-            services.AddScoped<IProductItemRepository, EfProductItemRepository>();
+            services.AddTransient<IProductItemService, ProductItemManager>();
+            services.AddTransient<IProductItemRepository, EfProductItemRepository>();
 
-            services.AddScoped<ITradeService, TradeManager>();
-            services.AddScoped<ITradeRepository, EfTradeRepository>();
+            services.AddTransient<ITradeService, TradeManager>();
+            services.AddTransient<ITradeRepository, EfTradeRepository>();
 
-            services.AddScoped<IRequestService, RequestManager>();
+            services.AddTransient<IRequestService, RequestManager>();
 
 
-            services.AddScoped<ISharedIdentityService,SharedIdentityService>();
+            services.AddScoped<ISharedIdentityService, SharedIdentityService>();
 
             services.AddAutoMapper(typeof(ProductMappingProfile));
             services.AddScoped<ICustomMapper, CustomMapper>();

@@ -3,6 +3,7 @@
     public enum TradeType
     {
         Buy,
+        BuybyLimit,
         Sell
     }
 }

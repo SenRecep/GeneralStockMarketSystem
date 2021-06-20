@@ -11,6 +11,7 @@ namespace GeneralStockMarket.Bll.Interfaces
     public interface IGenericService<T>
         where T : class, IEntityBase, new()
     {
+        public void BeginTransaction();
         public Task<IEnumerable<D>> GetAllAsync<D>() where D : IDTO;
         public Task<IEnumerable<D>> GetAllWithDeletedAsync<D>() where D : IDTO;
         public Task<IEnumerable<D>> GetAllByUserIdAsync<D>(Guid id) where D : IDTO;

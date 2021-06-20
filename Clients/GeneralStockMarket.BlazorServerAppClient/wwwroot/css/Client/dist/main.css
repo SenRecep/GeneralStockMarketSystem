@@ -24,6 +24,9 @@
   margin: 0;
   padding-left: 1rem;
 }
+.main-container .page .page-header p {
+  margin: 0 0.5rem 0 0;
+}
 .main-container .side .header {
   padding: 2rem 0;
 }

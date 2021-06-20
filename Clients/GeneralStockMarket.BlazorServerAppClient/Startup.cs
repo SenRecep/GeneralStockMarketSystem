@@ -1,5 +1,6 @@
 
 using Blazored.LocalStorage;
+using Blazored.Toast;
 
 using FluentValidation;
 
@@ -36,6 +37,8 @@ namespace GeneralStockMarket.BlazorServerAppClient
             {
                 config.JsonSerializerOptions.WriteIndented = false;
             });
+
+            services.AddBlazoredToast();
 
             services.AddFileReaderService(opt=> {
             });

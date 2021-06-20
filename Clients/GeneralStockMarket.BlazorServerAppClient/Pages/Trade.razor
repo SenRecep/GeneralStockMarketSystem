@@ -4,6 +4,7 @@
 @inject IWalletService walletService
 @inject PhotoHelper photoHelper
 @inject ITradeService tradeService
+@inject IToastService toastService
 
 <link href="/css/Client/dist/trade.css" rel="stylesheet" />
 
@@ -27,8 +28,8 @@
             </div>
             <div class="row">
                 <div class="col-sm-5 offset-sm-1">
-                    <p>Sahip olunan adet: @(UserProductItemDto.IsNotNull()?UserProductItemDto.Amount:0)</p>
-                    <p>Market Stoğu: @ProductTradeDto.Amount</p>
+                    <p>Sahip olunan adet: @(UserProductItemDto.IsNotNull()?UserProductItemDto.Amount.ToString("N2") : 0)</p>
+                    <p>Market Stoğu: @ProductTradeDto.Amount.ToString("N2")</p>
                 </div>
                 <div class="col-sm-5">
                     <p>Ortalama fiyat: @ProductTradeDto.AvgPrice.ToString("N2")₺</p>
@@ -42,6 +43,7 @@
             <div class="row mb-3">
                 <div class="col-sm-6 text-center btn-group offset-sm-3">
                     <button @onclick="()=>TradeTypeChange(TradeType.Buy)" class="btn btn-success btn-lg">Al</button>
+                    <button @onclick="()=>TradeTypeChange(TradeType.BuybyLimit)" class="btn btn-primary btn-lg">Limit</button>
                     <button @onclick="()=>TradeTypeChange(TradeType.Sell)" class="btn btn-danger btn-lg">Sat</button>
                 </div>
             </div>
@@ -58,7 +60,8 @@
                         <ValidationMessage For="() => TradeCreateDto.Amount"></ValidationMessage>
                     </div>
                 </div>
-                @if (TradeCreateDto.TradeType == TradeType.Sell)
+
+                @if (TradeCreateDto.TradeType == TradeType.Sell || TradeCreateDto.TradeType == TradeType.BuybyLimit)
                 {
                     <div class="form-group row">
                         <label for="Price" class="col-sm-1 col-form-label">Fiyat</label>
@@ -67,8 +70,20 @@
                             <ValidationMessage For="() => TradeCreateDto.UnitPrice"></ValidationMessage>
                         </div>
                     </div>
+                }
+
+                @if (TradeCreateDto.TradeType == TradeType.Sell)
+                {
+
                     <div class="form-group mb-0">
                         <input type="submit" class="form-control btn-danger" value="SAT">
+                    </div>
+                }
+
+                @if (TradeCreateDto.TradeType == TradeType.BuybyLimit)
+                {
+                    <div class="form-group mb-0">
+                        <input type="submit" class="form-control btn-primary" value="EMIR VER">
                     </div>
                 }
 
@@ -89,9 +104,9 @@
                     <li>
                         <a>
                             <div class="row">
-                                <p class="col-sm-3">İşlem Adeti: @item.Amount</p>
-                                <p class="col-sm-3">Toplam Fiyat: @(item.Amount*item.UnitPrice)₺</p>
-                                <p class="col-sm-3">Birim Fiyat: @item.UnitPrice₺</p>
+                                <p class="col-sm-3">İşlem Adeti: @item.Amount.ToString("N2")</p>
+                                <p class="col-sm-3">Toplam Fiyat: @((item.Amount*item.UnitPrice).ToString("N2"))₺</p>
+                                <p class="col-sm-3">Birim Fiyat: @item.UnitPrice.ToString("N2")₺</p>
                                 <p class="col-sm-3">İşlem Tarihi: @item.CreatedTime.ToString()</p>
                             </div>
                         </a>
@@ -118,6 +133,7 @@
 
     public ProductItemDto UserProductItemDto { get; set; }
 
+
     public void TradeTypeChange(TradeType mode)
     {
         TradeCreateDto.TradeType = mode;
@@ -137,20 +153,22 @@
 
         var response = await tradeService.TradeAsync(TradeCreateDto);
         if (response.IsSuccessful)
+        {
+            toastService.ShowSuccess("İşleminiz başarı ile gerçekleştirildi");
             await InitAsync();
+        }
         else
         {
             ErrorMessage = GeneralStockMarket.CoreLib.Response.Error.GetError(response.ErrorData);
+            toastService.ShowError(ErrorMessage);
             IsLoading = false;
             StateHasChanged();
         }
 
     }
 
-    public async Task InitAsync()
+    public async Task PageUpdate()
     {
-        IsLoading = true;
-        StateHasChanged();
         var productResponse = productService.GetProductByIdAsync(Id);
 
         var walletResponse = walletService.GetWalletAsync();
@@ -166,6 +184,13 @@
             UserProductItemDto = WalletDto.ProductItems.FirstOrDefault(x => x.ProductId == Id);
         }
         TradeCreateDto.ProductId = Id;
+    }
+
+    public async Task InitAsync()
+    {
+        IsLoading = true;
+        StateHasChanged();
+        await PageUpdate();
         IsLoading = false;
         StateHasChanged();
     }

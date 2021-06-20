@@ -60,6 +60,7 @@ namespace GeneralStockMarket.ClientShared.Containers.MicrosoftIOC
             services.AddScoped<ResourceOwnerPasswordTokenHandler>();
             services.AddScoped<ClientCredentialTokenHandler>();
 
+            services.AddHttpClient();
             services.AddHttpClient<IIdentityService, IdentitiyService>(opt => opt.BaseAddress = new(currentApiSettings.IdentityServer));
             services.AddHttpClient<ITokenService, TokenService>(opt => opt.BaseAddress = new(currentApiSettings.IdentityServer));
             services.AddHttpClient<IUserService, UserService>(opt => opt.BaseAddress = new(currentApiSettings.IdentityServer))

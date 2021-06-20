@@ -23,6 +23,7 @@ namespace GeneralStockMarket.Dal.Concrete.EntityFrameworkCore.Contexts
             base.OnModelCreating(modelBuilder);
         }
 
+        public DbSet<LimitOptionRequest> LimitOptionRequests { get; set; }
         public DbSet<DepositRequest> DepositRequests { get; set; }
         public DbSet<MarketItem> MarketItems { get; set; }
         public DbSet<NewTypeRequest> NewTypeRequests { get; set; }

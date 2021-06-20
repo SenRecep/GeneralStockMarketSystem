@@ -21,6 +21,10 @@ namespace GeneralStockMarket.Dal.Concrete.EntityFrameworkCore.Mapping
                .WithOne(x => x.Wallet)
                .HasForeignKey(x => x.WalletId)
                .OnDelete(DeleteBehavior.Cascade);
+            builder.HasMany(x => x.LimitOptionRequests)
+               .WithOne(x => x.Wallet)
+               .HasForeignKey(x => x.WalletId)
+               .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

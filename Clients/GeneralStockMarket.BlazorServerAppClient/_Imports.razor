@@ -1,4 +1,6 @@
 ﻿@using System.Net.Http
+@using System.Threading
+@using System.Net.Http.Json
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.Forms
@@ -20,12 +22,16 @@
 @using GeneralStockMarket.DTO.User
 @using Blazored.LocalStorage
 @using Blazored.FluentValidation
+@using Blazored.Toast
+@using Blazored.Toast.Services
+@using Blazored.Toast.Configuration
 @using Tewr.Blazor.FileReader
 @using GeneralStockMarket.ClientShared.StringInfo
 @using GeneralStockMarket.DTO.Wallet
-@using GeneralStockMarket.DTO.Request 
-@using GeneralStockMarket.DTO.Request.Enums 
+@using GeneralStockMarket.DTO.Request
+@using GeneralStockMarket.DTO.Request.Enums
 @using GeneralStockMarket.DTO.General
 @using GeneralStockMarket.BlazorServerAppClient.Pages
 @using GeneralStockMarket.DTO.Trade
 @using GeneralStockMarket.DTO.ProductItem 
+@using GeneralStockMarket.DTO.Response

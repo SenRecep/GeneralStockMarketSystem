@@ -12,6 +12,7 @@ using GeneralStockMarket.CoreLib.ExtensionMethods;
 using GeneralStockMarket.CoreLib.Response;
 using GeneralStockMarket.DTO.Product;
 using GeneralStockMarket.Entities.Concrete;
+using GeneralStockMarket.WebAPI.Services;
 using GeneralStockMarket.WebAPI.Services.Interfaces;
 
 using Microsoft.AspNetCore.Authorization;

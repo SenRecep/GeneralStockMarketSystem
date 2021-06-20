@@ -26,7 +26,6 @@ namespace GeneralStockMarket.WebAPI.Seeding
     {
         public static async Task CreateAccountingWallet(IServiceProvider serviceProvider)
         {
-            var dbContext = serviceProvider.GetRequiredService<GeneralStockMarketDbContext>();
             var httpClient = serviceProvider.GetRequiredService<HttpClient>();
             var enviorment = serviceProvider.GetRequiredService<IWebHostEnvironment>();
             var configuration = serviceProvider.GetRequiredService<IConfiguration>();

@@ -33,6 +33,7 @@ namespace GeneralStockMarket.Bll.Managers
         private readonly IGenericService<Transaction> genericTransactionService;
         private readonly IGenericService<MarketItem> genericMarketItemService;
         private readonly IGenericRepository<MarketItem> genericMarketItemRepository;
+        private readonly IGenericRepository<LimitOptionRequest> genericLimitOptionRequestRepository;
 
         public TradeManager(
             ITradeRepository tradeRepository,
@@ -42,7 +43,8 @@ namespace GeneralStockMarket.Bll.Managers
          IGenericService<Wallet> genericWalletService,
          IGenericService<Transaction> genericTransactionService,
          IGenericService<MarketItem> genericMarketItemService,
-        IGenericRepository<MarketItem> genericMarketItemRepository)
+        IGenericRepository<MarketItem> genericMarketItemRepository,
+        IGenericRepository<LimitOptionRequest> genericLimitOptionRequestRepository)
         {
             this.tradeRepository = tradeRepository;
             this.genericProductItemRepository = genericProductItemRepository;
@@ -52,6 +54,7 @@ namespace GeneralStockMarket.Bll.Managers
             this.genericTransactionService = genericTransactionService;
             this.genericMarketItemService = genericMarketItemService;
             this.genericMarketItemRepository = genericMarketItemRepository;
+            this.genericLimitOptionRequestRepository = genericLimitOptionRequestRepository;
         }
 
         public async Task<Response<NoContent>> BuyAsync(BuyModel buyModel)
@@ -162,6 +165,36 @@ namespace GeneralStockMarket.Bll.Managers
             if (response == null)
                 response = Response<NoContent>.Success(StatusCodes.Status201Created);
             return response;
+        }
+
+        public async Task<Response<NoContent>> BuybyLimitAsync(BuybyLimitModel buyModel)
+        {
+            var money= buyModel.Amount * (buyModel.Money * (1 + ComissionRate));
+            var wallet = await genericWalletService.GetByIdAsync<WalletDto>(buyModel.WalletId);
+            if (wallet.Money<money)
+                return Response<NoContent>.Fail(
+                    statusCode:StatusCodes.Status200OK,
+                    isShow:true,
+                    path: "trademanager/BuybyLimitAsync",
+                    errors:"satın alma başarısız, yeteri kadar paran mevcut değil."
+                    );
+
+            LimitOptionRequest limitOptionRequest = mapper.Map<LimitOptionRequest>(buyModel);
+            limitOptionRequest.Money = money;
+            limitOptionRequest.CreatedUserId = Guid.Parse(UserStringInfo.SystemUserId);
+            limitOptionRequest.InProgress = true;
+            await genericLimitOptionRequestRepository.AddAsync(limitOptionRequest);
+            await genericLimitOptionRequestRepository.Commit();
+
+            wallet.Money -= money;
+            await genericWalletService.UpdateAsync(new WalletUpdateDto()
+            {
+                Id = wallet.Id,
+                Money = wallet.Money,
+                UpdateUserId = Guid.Parse(UserStringInfo.SystemUserId)
+            });
+            await genericWalletService.Commit();
+            return Response<NoContent>.Success(StatusCodes.Status201Created);
         }
 
         public (ProductItem ProductItem, MarketItem MarketItem) CreateMarketItem(SellModel sellModel)

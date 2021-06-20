@@ -15,6 +15,7 @@ using GeneralStockMarket.Dal.Interface;
 using GeneralStockMarket.DTO.Trade;
 using GeneralStockMarket.DTO.Wallet;
 using GeneralStockMarket.Entities.Concrete;
+using GeneralStockMarket.WebAPI.Services;
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -61,14 +62,22 @@ namespace GeneralStockMarket.WebAPI.Controllers
                 var response = await tradeService.SellAsync(sellDto);
                 return CreateResponseInstance(response);
             }
-            else
+            else if(tradeCreateDto.TradeType==DTO.General.TradeType.Buy)
             {
                 var buyDto=mapper.Map<BuyModel>(tradeCreateDto);
                 buyDto.ProductItem = productItem;
                 buyDto.WalletId = walletDto.Id;
                 buyDto.UserId = userId;
-                buyDto.WalletDto = walletDto;
                 var response = await tradeService.BuyAsync(buyDto);
+                return CreateResponseInstance(response);
+            }
+            else
+            {
+                var buyDto = mapper.Map<BuybyLimitModel>(tradeCreateDto);
+                buyDto.WalletId = walletDto.Id;
+                buyDto.UserId = userId;
+                var response = await tradeService.BuybyLimitAsync(buyDto);
+                ScannerServiceState.IsScanned = true;
                 return CreateResponseInstance(response);
             }
         }

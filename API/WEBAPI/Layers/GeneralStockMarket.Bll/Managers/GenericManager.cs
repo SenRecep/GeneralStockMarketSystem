@@ -85,5 +85,10 @@ namespace GeneralStockMarket.Bll.Managers
         }
 
         public async Task<bool> Commit(bool state = true) => await genericRepository.Commit(state);
+
+        public void BeginTransaction()
+        {
+            genericRepository.BeginTransaction();
+        }
     }
 }
