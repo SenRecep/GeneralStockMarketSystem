@@ -1,0 +1,19 @@
+﻿<tr>
+    <td>@LimitRequest.CreatedTime.ToLongDateString() @LimitRequest.CreatedTime.ToShortTimeString()</td>
+    <td>@LimitRequest.ProductName</td>
+    <td>@LimitRequest.UnitPrice</td>
+    <td>@LimitRequest.Amount</td>
+    <td>@LimitRequest.Money</td>
+    <td>@(LimitRequest.InProgress?"Satışta":"İşlem Tamamlandı")</td>
+    <td><button @onclick="() => OnClick.InvokeAsync(LimitRequest.Id)"><i class="far fa-trash-alt"></i></button></td>
+</tr>
+
+@code{
+
+    [Parameter]
+    public EventCallback<Guid> OnClick { get; set; }
+
+    [Parameter]
+    public LimitRequestDto LimitRequest { get; set; }
+
+}

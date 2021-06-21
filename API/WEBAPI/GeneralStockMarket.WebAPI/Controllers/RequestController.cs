@@ -95,7 +95,7 @@ namespace GeneralStockMarket.WebAPI.Controllers
         {
             Guid userId = Guid.Parse(sharedIdentityService.GetUserId);
             model.UserId = userId;
-            Response<NoContent> response = null;
+            Response<NoContent> response;
             try
             {
                 IDTO dto = model.RequestType switch
@@ -151,7 +151,7 @@ namespace GeneralStockMarket.WebAPI.Controllers
         public async Task<IActionResult> Delete(RequestType type, Guid id)
         {
             Guid userId = Guid.Parse(sharedIdentityService.GetUserId);
-            Response<NoContent> response = null;
+            Response<NoContent> response;
             try
             {
                 DeleteDto deleteDto = new() { Id = id, UpdateUserId = userId };
@@ -197,7 +197,7 @@ namespace GeneralStockMarket.WebAPI.Controllers
         public async Task<IActionResult> VerifyUpdate(bool verify, RequestType type, Guid id)
         {
             Guid userId = Guid.Parse(sharedIdentityService.GetUserId);
-            Response<NoContent> response = null;
+            Response<NoContent> response;
             try
             {
                 VerifyDto verifyDto = new() { Id = id, UpdateUserId = userId, Verify = verify };

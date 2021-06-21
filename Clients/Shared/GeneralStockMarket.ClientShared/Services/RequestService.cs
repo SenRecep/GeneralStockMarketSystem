@@ -31,6 +31,11 @@ namespace GeneralStockMarket.ClientShared.Services
             return await httpResponse.Content.ReadFromJsonAsync<Response<NoContent>>();
         }
 
+        public Task<Response<List<LimitRequestDto>>> GetAllLimitRequestAsync()
+        {
+            return httpClient.GetFromJsonAsync<Response<List<LimitRequestDto>>>("api/limitOptionRequest");
+        }
+
         public async Task<Response<RequestDto>> GetAllRequestsAsync()
         {
             return await httpClient.GetFromJsonAsync<Response<RequestDto>>("api/request/getall");
@@ -49,10 +54,16 @@ namespace GeneralStockMarket.ClientShared.Services
         public async Task<Response<NoContent>> PostRequestAsync(GenaralCreateDto dto)
         {
             var httpResponse = await httpClient.PostAsJsonAsync("api/request", dto);
-            return  await httpResponse.Content.ReadFromJsonAsync<Response<NoContent>>();
+            return await httpResponse.Content.ReadFromJsonAsync<Response<NoContent>>();
         }
 
-        public async Task<Response<NoContent>> VerifyUpdateRequestAsync(bool mode,RequestType type, Guid id)
+        public async Task<Response<NoContent>> RemoveLimitOptionAsync(Guid id)
+        {
+            var httpResponse = await httpClient.DeleteAsync($"api/limitOptionRequest/{id}");
+            return await httpResponse.Content.ReadFromJsonAsync<Response<NoContent>>();
+        }
+
+        public async Task<Response<NoContent>> VerifyUpdateRequestAsync(bool mode, RequestType type, Guid id)
         {
             var httpResponse = await httpClient.DeleteAsync($"api/request/verifyupdate/{mode}/{type}/{id}");
             return await httpResponse.Content.ReadFromJsonAsync<Response<NoContent>>();

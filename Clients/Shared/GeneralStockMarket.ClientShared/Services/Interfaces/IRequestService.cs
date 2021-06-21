@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using GeneralStockMarket.CoreLib.Response;
@@ -15,5 +16,7 @@ namespace GeneralStockMarket.ClientShared.Services.Interfaces
         public Task<Response<NoContent>> PostRequestAsync(GenaralCreateDto dto);
         public Task<Response<NoContent>> DeleteRequestAsync(RequestType type,Guid id);
         public Task<Response<NoContent>> VerifyUpdateRequestAsync(bool mode,RequestType type,Guid id);
+        public Task<Response<List<LimitRequestDto>>> GetAllLimitRequestAsync();
+        public Task<Response<NoContent>> RemoveLimitOptionAsync(Guid id);
     }
 }

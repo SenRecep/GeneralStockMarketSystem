@@ -14,7 +14,8 @@ namespace GeneralStockMarket.ClientShared.Services
 
         public UserService(HttpClient httpClient) => this.httpClient = httpClient;
 
-        public async Task<Response<UserDto>> GetUserAsync() => await httpClient.GetFromJsonAsync<Response<UserDto>>("api/user/getuser");
+
+        public  Task<Response<UserDto>> GetUserAsync() =>  httpClient.GetFromJsonAsync<Response<UserDto>>("api/user/getuser");
 
         public async Task<Response<NoContent>> UpdateProfileAsync(UserDto dto)
         {

@@ -1,7 +1,11 @@
 ﻿@page "/account"
 @inject ILocalStorageService localStorageService
 @inject IUserService userService
+@inject IExportService exportService
 @inject IWalletService walletService
+@inject IJSRuntime jsRuntime
+@inject IServicesBaseUrlSettings urlBaseSettings
+@inject IWebHostEnvironment enviorment
 @inject NavigationManager navigationManager
 
 <link href="/css/Client/dist/account.css" rel="stylesheet" />
@@ -32,6 +36,9 @@
                         <span>Doğrulanmamış</span>
                     }
                 </p>
+            </div>
+            <div class="d-flex justify-content-center align-items-center">
+                <button @onclick="Download" class="btn btn-success">İşlem Geçmişini İndir</button>
             </div>
         </div>
 
@@ -152,5 +159,12 @@
             StateHasChanged();
         }
 
+    }
+
+    public async Task Download()
+    {
+        var response = await exportService.GetExportFileAsync();
+        if (response.IsSuccessful)
+            await jsRuntime.InvokeVoidAsync("OpenLink", $"{urlBaseSettings.GetServiceUrlsByEnvironment(enviorment).WebApi}/api/export/{response.Data}");
     }
 }

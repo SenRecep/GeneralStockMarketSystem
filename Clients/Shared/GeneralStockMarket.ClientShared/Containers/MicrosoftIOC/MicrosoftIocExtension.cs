@@ -75,6 +75,9 @@ namespace GeneralStockMarket.ClientShared.Containers.MicrosoftIOC
             services.AddHttpClient<IRequestService, RequestService>(opt => opt.BaseAddress = new(currentApiSettings.WebApi))
               .AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
 
+            services.AddHttpClient<IExportService, ExportService>(opt => opt.BaseAddress = new(currentApiSettings.WebApi))
+             .AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
+
             services.AddHttpClient<ITradeService, TradeService>(opt => opt.BaseAddress = new(currentApiSettings.WebApi))
               .AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
 

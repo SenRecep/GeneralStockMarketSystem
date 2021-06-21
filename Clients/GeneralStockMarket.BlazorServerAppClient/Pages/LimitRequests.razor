@@ -1,0 +1,101 @@
+﻿@page "/limitrequests"
+@inject IRequestService requestService
+@attribute [Authorize(Roles = RoleInfo.IsVerified)]
+
+<style>
+    .section {
+        background-color: var(--color6);
+        padding: 1rem;
+        margin: 2rem;
+    }
+    .request-page {
+        background-color: var(--color7);
+    }
+    .request-table {
+        height: 70vh;
+        margin: 2rem;
+        overflow: auto;
+    }
+</style>
+<div class="page request-page">
+    <PageHeader Title="Limit Istekleri" />
+    <div class="section">
+        @if (IsLoading)
+        {
+            <Loading />
+        }
+        else
+        {
+
+            <div class="request-table">
+                <div class="table-responsive w-100 ">
+
+                    <table class="table table-light table-striped table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Işlem Tarihi</th>
+                                <th>Ürün Adı</th>
+                                <th>Birim Fiyat</th>
+                                <th>Kalan Miktar</th>
+                                <th>Kalan Para</th>
+                                <th>Durum</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in LimitRequestDtos)
+                            {
+                                <LimitRequestRow OnClick="ClickHandler" LimitRequest="item" />
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th>Işlem Tarihi</th>
+                                <th>Ürün Adı</th>
+                                <th>Birim Fiyat</th>
+                                <th>Kalan Miktar</th>
+                                <th>Kalan Para</th>
+                                <th>Durum</th>
+                                <th></th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+
+
+
+
+        }
+
+    </div>
+</div>
+
+
+@code{
+    public bool IsLoading { get; set; } = true;
+    public List<LimitRequestDto> LimitRequestDtos { get; set; }
+
+    public int IdCounter { get; set; } = 0;
+
+    protected async Task ClickHandler(Guid data)
+    {
+        IsLoading = true;
+        await requestService.RemoveLimitOptionAsync(data);
+        await InitAsync();
+    }
+
+    protected async Task InitAsync()
+    {
+        var requestResponse = await requestService.GetAllLimitRequestAsync();
+        if (requestResponse.IsSuccessful)
+            LimitRequestDtos = requestResponse.Data;
+        IsLoading = false;
+        StateHasChanged();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await InitAsync();
+    }
+}

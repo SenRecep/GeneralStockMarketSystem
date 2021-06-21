@@ -57,6 +57,9 @@ namespace GeneralStockMarket.Bll.Containers.MicrosoftIOC
 
             services.AddTransient<IRequestService, RequestManager>();
 
+            services.AddTransient<ITransactionRepository, EfTransactionRepository>();
+            services.AddTransient<ILimitOptionRequestRepository, EfLimitOptionRequestRepository>();
+
 
             services.AddScoped<ISharedIdentityService, SharedIdentityService>();
 

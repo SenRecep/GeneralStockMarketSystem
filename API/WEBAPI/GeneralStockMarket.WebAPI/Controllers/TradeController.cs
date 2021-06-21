@@ -60,6 +60,7 @@ namespace GeneralStockMarket.WebAPI.Controllers
                 sellDto.WalletId = walletDto.Id;
                 sellDto.UserId = userId;
                 var response = await tradeService.SellAsync(sellDto);
+                ScannerServiceState.IsScanned = true;
                 return CreateResponseInstance(response);
             }
             else if(tradeCreateDto.TradeType==DTO.General.TradeType.Buy)
@@ -68,7 +69,9 @@ namespace GeneralStockMarket.WebAPI.Controllers
                 buyDto.ProductItem = productItem;
                 buyDto.WalletId = walletDto.Id;
                 buyDto.UserId = userId;
+                buyDto.WalletDto = walletDto;
                 var response = await tradeService.BuyAsync(buyDto);
+                ScannerServiceState.IsScanned = true;
                 return CreateResponseInstance(response);
             }
             else
