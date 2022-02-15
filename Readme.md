@@ -37,7 +37,6 @@ General Stock Market performanslı çalışabilmek için bazı açık kaynaklı 
 - [scss] - Kolay düzenlenebilir gelişmiş css yapısı.
 
 ## Kullanım
-
 Başlamak için öncelikle sisteme üye olmak gerekiyor. Üye olunduktan sonra kullanıcımız henüz doğrulanmamış olarak sisteme giriş yapıyor.
 
 Doğrulanmamış kullanıcılar sadece market fiyatlarını görüntüleyebiliyor. İşlem yapmak için hesap sayfasından gerekli bilgileri doldurmuş olmak gerekiyor. Kullanıcımız doğrulandığında artık istek, emir ve borsa işlemlerine erişim sağlayabiliyor.
